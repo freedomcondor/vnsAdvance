@@ -1,0 +1,52 @@
+vnsAdvance
+-----------------------------------------------------------------------------
+	Zhu Weixu (Tuti mi chiamano Harry), IRIDIA
+		weixu.zhu@ulb.ac.be
+		zhuweixu_harry@126.com
+	
+	Version:
+		1.0 :	created from argos3	22/03/2019
+				with a basic morphology implementation
+	
+-----------------------------------------------------------------------------
+This git repository works with argos3 (https://github.com/ilpincy/argos3)
+-----------------------------------------------------------------------------
+run.sh
+
+To run the scenario, there are two cases, depending on how did you install 
+your argos3
+
+1. if you run your argos from build directory without install to the system
+	please specify the argos build directory at the first line of run.sh,
+	and simply:
+		bash run.sh
+	
+2. if you install argos to the system
+	I think simply 
+		argos3 -c vns.argos
+	will work.
+
+-----------------------------------------------------------------------------
+coding.sh
+
+This file is used only if you are a vim user, otherwise you can delete it
+If you are a vim user, have a look at the file and you'll know what to do
+
+-----------------------------------------------------------------------------
+vns.argos
+
+This is the key file that argos3 run with, describing everything about the scenario
+
+In the vns scenario, there are quadcopters and ground vehicles(ground vehicles 
+are sometimes just called robots), the lua controller of each is specified at 
+line 33 and line 60 (or nearby) in vns.argos
+
+-----------------------------------------------------------------------------
+Quadcopter.lua/Vehicle.lua
+
+controllers of quadcopters/ground vehicles
+
+-----------------------------------------------------------------------------
+VNS.lua, StateMachine.lua, math/
+
+These are Libraries that lua controllers are using

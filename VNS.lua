@@ -48,6 +48,8 @@ function VNS:create(option)
 	instance.childrenN = 0
 	instance.childrenRolesVnsTT = {new = {},}
 
+	instance.lost = 0
+
 	return instance
 end
 
@@ -87,18 +89,6 @@ function VNS:changeRole(idS, newRoleS)
 		end
 		self.childrenRolesVnsTT[newRoleS][idS] = self.childrenVnsT[idS]
 	end
-end
-
-function VNS:step{
-	--prestep()
-	--expecting cmd
-	--expecting report
-	--expecting other msg
-	--poststep()
-}
-	-- prestep()
-	
-	-- poststep()
 end
 
 return VNS
