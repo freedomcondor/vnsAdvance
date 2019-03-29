@@ -50,3 +50,8 @@ controllers of quadcopters/ground vehicles
 VNS.lua, StateMachine.lua, math/
 
 These are Libraries that lua controllers are using
+
+-----------------------------------------------------------------------------
+debugger.lua
+
+a basic lua debugger, has some basic functions

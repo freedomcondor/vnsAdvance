@@ -27,6 +27,7 @@ local myTakeoverAssign = nil
 local deniedReport = nil
 local deniedReportCount = 0
 local lostCountN = 0
+local myCurrentSpeed = {x = 0, y = 0}
 
 ----- structure -----
 local baseDis = 200
@@ -226,6 +227,9 @@ function step()
 			speedyN = speedyN / speedN
 			setVelocity(speedxN, speedyN, turn)
 
+			myCurrentSpeed.x = speedxN
+			myCurrentSpeed.y = speedyN
+
 			if deniedReportCount > 0 then
 				local VisionDataNST = makeVisionInfoDataNST(robotsRT, boxesVT) 
 				sendCMD(deniedReport, "VisionInfo", VisionDataNST)
@@ -236,6 +240,17 @@ function step()
 	--------- braining --------------------
 	elseif vns.stateS == "braining" then
 		vns.parentS = nil
+		-- no recruit, fly randomly
+		local turn = (math.random() - 0.5) * 3
+		local speedxN = (math.random() - 0.5) * 100.0
+		local speedyN = (math.random() - 0.5) * 100.0
+		local speedN = math.sqrt(speedxN * speedxN + speedyN * speedyN)
+		speedxN = speedxN / speedN * 0.3
+		speedyN = speedyN / speedN * 0.3
+		setVelocity(speedxN, speedyN, turn)
+
+		myCurrentSpeed.x = speedxN
+		myCurrentSpeed.y = speedyN
 
 	--------- reporting --------------------
 	elseif vns.stateS == "reporting" then
@@ -261,6 +276,10 @@ function step()
 					rotateN = -5
 				end
 				setVelocity(speedxN, speedyN, rotateN)
+
+				myCurrentSpeed.x = speedxN
+				myCurrentSpeed.y = speedyN
+
 			-- get fly cmd
 			elseif cmdC.cmdS == "takeoverassign" and cmdC.fromIDS == vns.parentS then
 				noCMD = false
@@ -473,7 +492,9 @@ function step()
 		                           fluxVectorV.y * fluxVectorV.y)
 		fluxVectorV.x = fluxVectorV.x / disFluxN * 30
 		fluxVectorV.y = fluxVectorV.y / disFluxN * 30
-		local leftSpeed, rightSpeed = calcRobotBiSpeed(fluxVectorV, robotR.dirN, 1)
+		local targetSpeed = {x = fluxVectorV.x + myCurrentSpeed.x,
+		                     y = fluxVectorV.y + myCurrentSpeed.y,}
+		local leftSpeed, rightSpeed = calcRobotBiSpeed(targetSpeed, robotR.dirN, 1)
 		setRobotVelocity(robotR.idS, leftSpeed, rightSpeed)
 	end
 
@@ -485,7 +506,9 @@ function step()
 		                           fluxVectorV.y * fluxVectorV.y)
 		fluxVectorV.x = fluxVectorV.x / disFluxN * 30
 		fluxVectorV.y = fluxVectorV.y / disFluxN * 30
-		local leftSpeed, rightSpeed = calcRobotBiSpeed(fluxVectorV, robotR.dirN, 1)
+		local targetSpeed = {x = fluxVectorV.x + myCurrentSpeed.x,
+		                     y = fluxVectorV.y + myCurrentSpeed.y,}
+		local leftSpeed, rightSpeed = calcRobotBiSpeed(targetSpeed, robotR.dirN, 1)
 		setRobotVelocity(robotR.idS, leftSpeed, rightSpeed)
 	end
 
@@ -539,6 +562,9 @@ function step()
 				dirV.x = 0
 				dirV.y = 0
 			end
+
+			dirV.x = dirV.x + myCurrentSpeed.x
+			dirV.y = dirV.y + myCurrentSpeed.y
 
 			-- calc rotate 
 			local difN
