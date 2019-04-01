@@ -158,10 +158,13 @@ function step()
 			if childVns.typeS == "quad" then
 				childVns.lost = childVns.lost + 1
 				if childVns.lost == 3 then
+					--TODO: check quadcopter
 					sendCMD(idS, "dismiss")
 					vns:remove(idS)
 				end
 			else
+				--TODO: check marking robots
+				--		change the number
 				sendCMD(idS, "dismiss")
 				vns:remove(idS)
 			end
@@ -302,6 +305,10 @@ function step()
 				sendCMD(vns.parentS, "VisionInfo", VisionDataNST)
 				sendCMD(vns.parentS, "ack")
 				noCMD = false
+
+			elseif then--cmdC.cmdS == "recruit" and myTakeoverAssign == cmdC.fromIDS then
+				-- get missing report
+
 			end
 		end
 
@@ -319,6 +326,7 @@ function step()
 		if connect == true then
 			local VisionDataNST = makeVisionInfoDataNST(robotsRT, boxesVT) 
 			sendCMD(vns.parentS, "VisionInfo", VisionDataNST)
+			--TODO: check numbers, ask parents
 		end
 	end
 
@@ -376,6 +384,7 @@ function step()
 			break
 		end
 	end
+	--TODO: allocate missing
 
 	-- allocate quads
 	--[[
