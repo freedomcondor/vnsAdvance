@@ -1,23 +1,14 @@
 ------------------------------------------------------
--- a lua State Machine
--- Weixu Zhu (Harry) zhuweixu_harry@126.com
--- Version 1.0
--- 		first attempt
+--	Weixu Zhu, Tutti mi chiamano Harry.
+--		zhuweixu_harry@126.com
+--
+--	Version 2.0:
+--		rearrange everything, try modular
 ------------------------------------------------------
-function table.getSize(n)
-	if type(n) == "table" then
-		local count = 0
-		for i, v in pairs(n) do
-			count = count + 1
-		end
-		return count
-	else
-		return nil
-	end
-end
-------------------------------------------------------
-Vec3 = require("Vector3")
-Quaternion = require("Quaternion")
+local Vec3 = require("Vector3")
+local Quaternion = require("Quaternion")
+local Msg = require("Message")
+local Linar = require("Linar")
 
 local VNS = {CLASSVNS = true}
 VNS.__index = VNS
@@ -31,64 +22,150 @@ function VNS:create(option)
 	setmetatable(instance, self)
 
 	instance.idS = option.idS
-	--instance.locV3 = option.locV3 or Vec3:create()
-	--instance.dirQ = option.dirQ or Quaternion:create()
-	if option.locV == nil then
-		instance.locV = {x = 0, y = 0}
-	else
-		instance.locV = {x = option.locV.x, y = option.locV.y}
-	end
-	instance.dirN = option.dirN or Quaternion:create()
-	instance.typeS = option.typeS
-	instance.roleS = option.roleS
-	instance.stateS = option.stateS
-	instance.parentS = option.parentS
+	instance.locV3 = option.locV3 or Vec3:create()
+	instance.dirQ = option.dirQ or Quaternion:create()
 
-	instance.childrenVnsT = {}
-	instance.childrenN = 0
-	instance.childrenRolesVnsTT = {new = {},}
-
-	instance.lost = 0
+	instance.childrenTVns = {}
 
 	return instance
 end
 
-function VNS:add(_xVns, _roleS)
-	if type(_xVns) == "table" and _xVns.CLASSVNS == true then
-		if self.childrenVnsT[_xVns.idS] ~= nil then 
-			print("Warning: double add", _xVns.idS) end
-		self.childrenVnsT[_xVns.idS] = _xVns
-		self.childrenRolesVnsTT.new[_xVns.idS] = _xVns
-		_xVns.parentS = self.idS
-		_xVns.roleS = "new"
-		if _roleS ~= nil then
-			self:changeRole(_xVns.idS, _roleS)
-		end
-	else
-		print("Warning: invalid add")
+function VNS:run(paraT)
+	for i, moduleM in ipairs(self.modules) do
+		moduleM:run(self, paraT)
 	end
 end
 
-function VNS:remove(idS)
-	if self.childrenVnsT[idS] ~= nil then
-		self.childrenVnsT[idS].parentS = nil
-		self.childrenVnsT[idS] = nil
-		for i, vVnsT in pairs(self.childrenRolesVnsTT) do
-			vVnsT[idS] = nil
+VNS.Msg = Msg
+
+------------------------------------------------------
+--	Modules
+------------------------------------------------------
+VNS.modules = {}
+
+-- define modules
+
+-- connector -----------------------------------------
+VNS.modules.connector = { 
+	countTN = {},	-- father class data, not used if inherited
+	waitingTVns = {},
+}
+function VNS.modules.connector:step(vns, robotListR)
+	self:update(robotListR, vns)
+	self:lostCount(robotListR)
+	-- recruit new
+	for idS, robotR in pairs(robotListR) do
+		if vns.childrenTVns[idS] == nil and self.waitingTVns[idS] == nil then
+			self:recruit(robotR, vns)
+		end
+	end
+
+	-- check ack
+	for _, msgM in ipairs(VNS.Msg.getAM("ALLMSG", "ack")) do
+		if self.waitingTVns[msgM.fromS] ~= nil then
+			vns.childrenTVns[msgM.fromS] = self.waitingTVns[msgM.fromS]
+			self.waitingTVns[msgM.fromS] = nil
+			self.countTN[msgM.fromS] = nil
 		end
 	end
 end
 
-function VNS:changeRole(idS, newRoleS)
-	if self.childrenVnsT[idS] ~= nil then
-		local oldRoleS = self.childrenVnsT[idS].roleS
-		self.childrenRolesVnsTT[oldRoleS][idS] = nil
-		self.childrenVnsT[idS].roleS = newRoleS
-		if self.childrenRolesVnsTT[newRoleS] == nil then
-			self.childrenRolesVnsTT[newRoleS] = {}
+function VNS.modules.connector:recruit(robotR, vns)
+	VNS.Msg.send(robotR.idS, "recruit", {math.random()}) 
+		--TODO: give vns status in the future
+	self.countTN[robotR.idS] = 0
+	self.waitingTVns[robotR.idS] = VNS:new{
+		idS = robotR.idS,
+		locV3 = robotR.locV3,
+		dirQ = robotR.dirQ,
+	}
+end
+function VNS.modules.connector:update(robotListR, vns)
+	if type(robotListR) ~= "table" then return end
+
+	-- update waiting list
+	for idS, robotR in pairs(robotListR) do
+		if self.waitingTVns[idS] ~= nil then
+			self.waitingTVns[idS].locV3 = robotR.locV3
+			self.waitingTVns[idS].dirQ = robotR.dirQ
 		end
-		self.childrenRolesVnsTT[newRoleS][idS] = self.childrenVnsT[idS]
+	end
+
+	-- update vns children list
+	for idS, robotR in pairs(robotListR) do
+		if vns.childrenTVns[idS] ~= nil then
+			vns.childrenTVns[idS].locV3 = robotR.locV3
+			vns.childrenTVns[idS].dirQ = robotR.dirQ
+		end
 	end
 end
+function VNS.modules.connector:lostCount(robotListR)
+	-- lost count
+	for idS, _ in pairs(self.waitingTVns) do
+		self.countTN[idS] = self.countTN[idS] + 1
+		if self.countTN[idS] == 3 then
+			self.countTN[idS] = nil
+			self.waitingTVns[idS] = nil
+		end
+	end
+end
+
+-- vehicle Connector --------------------------------
+VNS.modules.vehicleConnector = { 
+	countTN = {},
+	waitingTVns = {},
+}
+setmetatable(VNS.modules.vehicleConnector, {__index = VNS.modules.connector})
+function VNS.modules.vehicleConnector:run(vns, paraT)
+	self:step(vns, paraT.vehiclesTR)
+end
+
+-- parent waitor --------------------------------
+VNS.modules.parentwaitor = {
+	run = function(self, vns, paraT)
+		if vns.parent == nil then
+			for _, msgM in pairs(VNS.Msg.getAM("ALLMSG", "recruit")) do
+				vns.parent = msgM.fromS
+				VNS.Msg.send(msgM.fromS, "ack")
+			end
+		end
+	end,
+}
+
+-- driver -----------------------------------------
+VNS.modules.driver = {
+	run = function(self, vns, paraT)
+		-- listen to drive
+		local velocityV3, dirQ
+		for _, msgM in pairs(VNS.Msg.getAM(vns.parent, "drive")) do
+			-- a drive message data is:
+			--	{	yourLocV3, yourDirQ,
+			--		targetVelocityV3, targetDirQ
+			--	}
+			local targetVelocityV3 = Linar.myVecToYou(
+				msgM.dataAN.targetVelocityV3,
+				msgM.dataAN.yourLocV3,
+				msgM.dataAN.yourDirQ,
+			)
+			local targetDirQ = Linar.myQuadToYou(
+				msgM.dataAN.targetDirQ,
+				msgM.dataAN.yourDirQ,
+			)
+
+			-- set velocity
+		end
+
+		--for each children
+		--fly to rally point
+	end,
+}
+
+-- running sequence of modules
+--[[
+VNS.modules = {
+	VNS.modules.vehicleConnector,
+	VNS.modules.driver,
+}
+--]]
 
 return VNS
