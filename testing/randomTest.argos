@@ -29,7 +29,7 @@
         <radios implementation="default" show_rays="false"/>
         <proximity implementation="default" show_rays="true"/>
       </sensors>
-      <params script="driverTest_vehicle.lua" />
+      <params script="randomTest_vehicle.lua" />
     </lua_controller>
 
     <lua_controller id="quadcopter_controller">
@@ -55,7 +55,7 @@
         </cameras>
         <radios implementation="default" show_rays="false"/>
       </sensors>
-      <params script="driverTest_quadcopter.lua" />
+      <params script="randomTest_quadcopter.lua" />
     </lua_controller>
 
   </controllers>
@@ -310,7 +310,7 @@
   <!-- ******************* -->
   <physics_engines>
     <dynamics3d id="dyn3d" iterations="1">
-      <floor height="0.01"/>
+      <floor height="0.01" friction="2"/>
       <gravity g="9.8" />
     </dynamics3d>
   </physics_engines>

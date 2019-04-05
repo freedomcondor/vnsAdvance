@@ -12,7 +12,7 @@ local Quaternion = require("Quaternion")
 
 local VNS = require("VNS")
 
-VNS.modules = {
+VNS.runModules = {
 	--VNS.modules.parentwaitor,
 	VNS.modules.vehicleConnector,
 	--VNS.modules.driver,

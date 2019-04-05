@@ -16,6 +16,8 @@ local VNS = require("VNS")
 VNS.EnableModules = {
 	VNS.Modules.VehicleConnector,
 	VNS.Modules.QuadcopterConnector,
+	VNS.Modules.LostCounter,
+	VNS.Modules.Assigner,
 	VNS.Modules.Driver,
 }
 
@@ -39,7 +41,9 @@ function step()
 	print("----------" .. IF.myIDS() .. "------------------")
 
 	vns:run{vehiclesTR = getVehicleTR()}
+	vns.modules[4]:assign("vehicle1", "quadcopter1", vns)
 
+	print("parent = ", vns.parentS)
 	print("childrenTVns = ")
 	showTable(vns.childrenTVns, 1)
 end

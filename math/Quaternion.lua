@@ -4,6 +4,8 @@
 --
 --   version 1.1 : some problems in create from 2 vecs are detected and marked
 --   version 2   : create default from rotation, use createHardValue for hard set
+--   version 3   : create getAxis, getAng
+--   version 3.1 : create() creates a rotate((0,0,1),0) which is hardvalue(0,0,0,1) not a hardvalue(0,0,0,0)
 --]]
 local Vec3 = require("Vector3")
 
@@ -80,7 +82,20 @@ function Quaternion:create(x,y,z,th)	-- create from rotation
 		v = v:nor()
 		return self:createFromHardValue(v * math.sin(halfth),math.cos(halfth))
 	end
-	return self:createFromHardValue(0,0,0,0)
+	--return self:createFromHardValue(0,0,0,0)
+	return self:create(0,0,1,0)
+end
+
+function Quaternion:getAxis()
+	local halfth = math.acos(self.w)
+	if halfth == 0 then
+		return Vec3:create(0,0,1)
+	end
+	return (self.v / math.sin(halfth)):nor()
+end
+
+function Quaternion:getAng()	-- in rad
+	return math.acos(self.w) * 2
 end
 
 function Quaternion.__add(a,b)

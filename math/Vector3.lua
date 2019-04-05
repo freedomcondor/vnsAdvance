@@ -1,3 +1,6 @@
+--------------------------------------------
+--	Version 1.1 : nor() length zero check
+--------------------------------------------
 local Vector3 = {CLASS = "Vector3"}
 Vector3.__index = Vector3
 
@@ -137,7 +140,11 @@ end
 -- Normalize to len == 1
 function Vector3:nor()
 	--return Vector3:create(self.x / self:len(), self.y / self:len(), self.z / self:len())
-	return Vector3:create(self/self:len())
+	if self:len() == 0 then
+		return Vector3:create()
+	else
+		return Vector3:create(self/self:len())
+	end
 end
 --function normalize
 --function angle axis

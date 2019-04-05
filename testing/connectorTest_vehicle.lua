@@ -3,15 +3,15 @@
 ------------------------------------------------------------------------
 package.path = package.path .. ";../?.lua"
 package.path = package.path .. ";../math/?.lua"
+package.path = package.path .. ";../VNSModules/?.lua"
 --require("debugger")
 require("TableTools")
 
 local IF = {} -- Robot Interface
 local VNS = require("VNS")
 
-VNS.modules = {
-	VNS.modules.parentwaitor,
-	--VNS.modules.driver,
+VNS.EnableModules = {
+	VNS.Modules.ParentWaitor,
 }
 
 local vns

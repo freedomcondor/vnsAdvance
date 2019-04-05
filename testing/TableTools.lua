@@ -1,4 +1,4 @@
-function showTable(table, number)
+function showTable(table, number, dontShowS)
 	if number == nil then number = 0 end
 	if type(table) ~= "table" then return nil end
 
@@ -7,7 +7,9 @@ function showTable(table, number)
 		xyz = "x"
 	end
 
+	local flag = false
 	for i, v in pairs(table) do
+		flag = true
 		if i == "x" or i == "y" or i == "z" then
 			if xyz == "x" then
 				i = "x"  v = table.x
@@ -21,6 +23,8 @@ function showTable(table, number)
 			end
 		end
 
+		if i ~= dontShowS then
+
 		local str = ""
 		for j = 1, number do
 			str = str .. "\t"
@@ -30,11 +34,19 @@ function showTable(table, number)
 
 		if type(v) == "table" then
 			print(str)
-			showTable(v, number + 1)
+			showTable(v, number + 1, dontShowS)
 		else
 			str = str .. tostring(v)
 			print(str)
 		end
+	end end
+	if flag == false then
+		local str = ""
+		for j = 1, number do
+			str = str .. "\t"
+		end
+
+		print(str .. "EMPTYTABLE")
 	end
 end
 

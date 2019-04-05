@@ -16,6 +16,9 @@ local VNS = require("VNS")
 VNS.EnableModules = {
 	VNS.Modules.VehicleConnector,
 	VNS.Modules.QuadcopterConnector,
+	VNS.Modules.LostCounter,
+	--VNS.Modules.Assigner,
+	VNS.Modules.RandomWalker,
 	VNS.Modules.Driver,
 }
 
@@ -39,9 +42,11 @@ function step()
 	print("----------" .. IF.myIDS() .. "------------------")
 
 	vns:run{vehiclesTR = getVehicleTR()}
+	--vns.modules[4]:assign("vehicle1", "quadcopter1", vns)
 
+	print("parent = ", vns.parentS)
 	print("childrenTVns = ")
-	showTable(vns.childrenTVns, 1)
+	showTable(vns.childrenTVns, 1, "modules")
 end
 
 -------------------------------------------------------------------
@@ -129,8 +134,12 @@ VNS.Msg.Packet.receiveDataAAN = function()
 	return robot.radios["radio_0"].rx_data
 end
 
-VNS.Modules.Driver.move = function(transV3, rotateV3)
-	local speedscale = 0.3
+VNS.Modules.Driver.move = function(transV3, rotateV3) --legacy mode
+	VNS.move(transV3, rotateV3)
+end
+
+VNS.move = function(transV3, rotateV3)
+	local speedscale = 0.15
 	local turnscale = 1
 	local x = transV3.x * speedscale
 	local y = transV3.y * speedscale
