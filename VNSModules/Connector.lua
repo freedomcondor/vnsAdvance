@@ -26,7 +26,7 @@ function Connector:step(vns, robotListR)
 		if vns.childrenTVns[idS] == nil and 
 		   self.waitingTVns[idS] == nil and 
 		   vns.parentS ~= idS then -- TODO: still can't elinimate loop
-			self:recruit(robotR, vns)
+			self:recruit(robotR, vns, self.robotType)
 		end
 	end
 
@@ -40,7 +40,7 @@ function Connector:step(vns, robotListR)
 	end
 end
 
-function Connector:recruit(robotR, vns)
+function Connector:recruit(robotR, vns, robotType)
 	vns.Msg.send(robotR.idS, "recruit", {math.random()}) 
 		--TODO: give vns status in the future
 	self.countTN[robotR.idS] = 0
@@ -48,6 +48,7 @@ function Connector:recruit(robotR, vns)
 		idS = robotR.idS,
 		locV3 = robotR.locV3,
 		dirQ = robotR.dirQ,
+		robotType = robotType
 	}
 end
 

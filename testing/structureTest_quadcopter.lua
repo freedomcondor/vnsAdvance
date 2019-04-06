@@ -45,7 +45,7 @@ function step()
 	vns:run{vehiclesTR = getVehicleTR()}
 	print("parent = ", vns.parentS)
 	print("childrenTVns = ")
-	showTable(vns.childrenTVns, 1)
+	showTable(vns.childrenTVns, 1, "modules")
 end
 
 -------------------------------------------------------------------

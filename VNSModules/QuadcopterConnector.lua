@@ -12,6 +12,7 @@ QuadcopterConnector.__index = QuadcopterConnector
 function QuadcopterConnector:new()
 	local instance = Connector:new()
 	setmetatable(instance, self)
+	instance.robotType = "quadcopter"
 	return instance
 end
 

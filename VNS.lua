@@ -39,6 +39,7 @@ function VNS:create(option)
 	instance.locV3 = option.locV3 or Vec3:create()
 	instance.dirQ = option.dirQ or Quaternion:create()
 	instance.parentS = nil
+	instance.robotType = option.robotType
 
 	instance.childrenTVns = {}
 

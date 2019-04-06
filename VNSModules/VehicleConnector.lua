@@ -8,6 +8,7 @@ VehicleConnector.__index = VehicleConnector
 function VehicleConnector:new()
 	local instance = Connector:new()
 	setmetatable(instance, self)
+	instance.robotType = "vehicle"
 	return instance
 end
 

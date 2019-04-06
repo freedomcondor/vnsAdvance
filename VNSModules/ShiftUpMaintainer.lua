@@ -20,10 +20,25 @@ function ShiftUpMaintainer:new()
 		children = {
 			{	locV3 = Vec3:create(-dis, -dis, 0),
 				dirQ = Quaternion:create(0,0,1, -math.pi*3/4),
+				robotType = "vehicle",
 			},
 
 			{	locV3 = Vec3:create(dis, -dis, 0),
 				dirQ = Quaternion:create(0,0,1, -math.pi*3/4),
+				robotType = "vehicle",
+			},
+			{	locV3 = Vec3:create(-dis, dis, 0),
+				dirQ = Quaternion:create(0,0,1, -math.pi*3/4),
+				robotType = "vehicle",
+			},
+			{	locV3 = Vec3:create(dis, dis, 0),
+				dirQ = Quaternion:create(0,0,1, -math.pi*3/4),
+				robotType = "vehicle",
+			},
+
+			{	locV3 = Vec3:create(0, -dis*2, 0),
+				dirQ = Quaternion:create(0,0,1, -math.pi/2),
+				robotType = "quadcopter",
 			},
 		},
 	}
@@ -33,6 +48,11 @@ end
 
 function ShiftUpMaintainer:setStructure(vns, structure)
 	self.structure = structure
+
+	-- re allocate every child
+	for idS, childVns in pairs(vns.childrenTVns) do
+		childVns.allocated = nil
+	end
 end
 
 function ShiftUpMaintainer:run(vns)
@@ -55,13 +75,14 @@ function ShiftUpMaintainer:run(vns)
 			-- some branch is not fulfill
 			if branchT.actorS == nil then
 				for idS, childVns in pairs(vns.childrenTVns) do
-					if childVns.allocated == nil then
+					if childVns.allocated == nil and 
+					   childVns.robotType == branchT.robotType then
+						branchT.actorS = idS
+						childVns.allocated = true
 						childVns.rallyPoint = {
 							locV3 = branchT.locV3,
 							dirQ = branchT.dirQ,
 						}
-						branchT.actorS = idS
-						childVns.allocated = true
 						break
 					end
 				end
