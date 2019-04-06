@@ -13,8 +13,12 @@ local VNS = require("VNS")
 VNS.EnableModules = {
 	VNS.Modules.ParentWaitorDeny,
 	VNS.Modules.LostCounter,
+
 	--VNS.Modules.Assigner,
-	VNS.Modules.ShiftUpMaintainer,
+	--VNS.Modules.Maintainer,
+	--VNS.Modules.ShiftUpper,
+	VNS.Modules.Shifter,
+
 	--VNS.Modules.RandomWalker,
 	VNS.Modules.Driver,
 }
@@ -75,7 +79,7 @@ VNS.move = function(transV3, rotateV3)
 	local speedscale = 25
 
 	local smalllimit = 0.3
-	if 0 < transV3.x and transV3.x < smalllimit then transV3.x = smalllimit end
+	if 0 <= transV3.x and transV3.x < smalllimit then transV3.x = smalllimit end
 	if 0 > transV3.x and transV3.x >-smalllimit then transV3.x =-smalllimit end
 	left  = left  - transV3.y/transV3.x * turnRate
 	right = right + transV3.y/transV3.x * turnRate

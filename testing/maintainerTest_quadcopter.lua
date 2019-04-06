@@ -17,8 +17,12 @@ VNS.EnableModules = {
 	VNS.Modules.VehicleConnector,
 	VNS.Modules.QuadcopterConnector,
 	VNS.Modules.LostCounter,
+
 	--VNS.Modules.Assigner,
-	VNS.Modules.ShiftUpMaintainer,
+	--VNS.Modules.Maintainer,
+	--VNS.Modules.ShiftUpper,
+	VNS.Modules.Shifter,
+
 	--VNS.Modules.RandomWalker,
 	VNS.Modules.Driver,
 }
@@ -29,7 +33,38 @@ local vns
 --   ARGoS Functions
 ------------------------------------------------------------------------
 function init()
+	local dis = 100
+	local structure = {
+		locV3 = Vec3:create(),
+		dirQ = Quaternion:create(),
+		children = {
+			{	locV3 = Vec3:create(-dis, -dis, 0),
+				dirQ = Quaternion:create(0,0,1, 0),
+				robotType = "vehicle",
+			},
+
+			{	locV3 = Vec3:create(dis, -dis, 0),
+				dirQ = Quaternion:create(0,0,1, 0),
+				robotType = "vehicle",
+			},
+			{	locV3 = Vec3:create(-dis, dis, 0),
+				dirQ = Quaternion:create(0,0,1, 0),
+				robotType = "vehicle",
+			},
+			{	locV3 = Vec3:create(dis, dis, 0),
+				dirQ = Quaternion:create(0,0,1, 0),
+				robotType = "vehicle",
+			},
+
+			{	locV3 = Vec3:create(0, dis*2, 0),
+				dirQ = Quaternion:create(0,0,1, -math.pi/2),
+				robotType = "quadcopter",
+			},
+		},
+	}
+
 	vns = VNS:new{id = IF.myIDS()}
+	vns.modules[4]:setStructure(vns, structure)
 	reset()
 end
 
@@ -46,6 +81,8 @@ function step()
 	print("parent = ", vns.parentS)
 	print("childrenTVns = ")
 	showTable(vns.childrenTVns, 1, "modules")
+	print("childrenAssignTS = ")
+	showTable(vns.childrenAssignTS, 1)
 end
 
 -------------------------------------------------------------------

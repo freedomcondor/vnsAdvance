@@ -40,6 +40,14 @@ function Assigner:run(vns)
 		vns.myAssignParent = msgM.dataT.assignToS
 	end
 
+	-- update parentLoc by drive message
+	for _,msgM in ipairs(vns.Msg.getAM(vns.parentS, "drive")) do
+		local yourLocV3 = vns.Msg.recoverV3(msgM.dataT.yourLocV3)
+		local yourDirQ = vns.Msg.recoverQ(msgM.dataT.yourDirQ)
+		self.parentLocV3 = Linar.myVecToYou(Vec3:create(), yourLocV3, yourDirQ)
+		break
+	end
+
 	-- allcate children
 	if vns.childrenAssignTS == nil then return end
 
@@ -53,13 +61,6 @@ function Assigner:run(vns)
 					dirQ = Quaternion:create()
 				}
 			elseif vns.parentS == assignToS then
-				-- update parentLoc by drive message
-				for _,msgM in ipairs(vns.Msg.getAM(vns.parentS, "drive")) do
-					local yourLocV3 = vns.Msg.recoverV3(msgM.dataT.yourLocV3)
-					local yourDirQ = vns.Msg.recoverQ(msgM.dataT.yourDirQ)
-					self.parentLocV3 = Linar.myVecToYou(Vec3:create(), yourLocV3, yourDirQ)
-					break
-				end
 				childVns.rallyPoint = {
 					locV3 = self.parentLocV3,
 					dirQ = Quaternion:create()
@@ -74,6 +75,35 @@ function Assigner:assign(_childidS, _assignToIds, vns)
 		vns.childrenAssignTS = {} end
 	vns.childrenAssignTS[_childidS] = _assignToIds
 	vns.Msg.send(_childidS, "assign", {assignToS = _assignToIds})
+
+	--update rally point immediately
+	local assignToS = _assignToIds
+	local childVns = vns.childrenTVns[_childidS]
+	if vns.childrenTVns[assignToS] ~= nil then
+		childVns.rallyPoint = {
+			locV3 = vns.childrenTVns[assignToS].locV3,
+			--dirQ = vns.childrenTVns[assignToS].dirQ,
+			dirQ = Quaternion:create()
+		}
+	elseif vns.parentS == assignToS then
+		childVns.rallyPoint = {
+			locV3 = self.parentLocV3,
+			dirQ = Quaternion:create()
+		}
+	end
+end
+
+function Assigner:unsign(_childidS, vns)
+	if vns.childrenAssignTS ~= nil then
+		vns.childrenAssignTS[_childidS] = nil
+	end
+	vns.Msg.send(_childidS, "assign", {assignToS = nil})
+
+	local childVns = vns.childrenTVns[_childidS]
+	childVns.rallyPoint = {
+		locV3 = Vec3:create(),
+		dirQ = Quaternion:create(),
+	}
 end
 
 return Assigner

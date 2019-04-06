@@ -18,7 +18,9 @@ Modules.ParentWaitorDeny = require("ParentWaitorDeny")
 Modules.LostCounter = require("LostCounter")
 Modules.RandomWalker = require("RandomWalker")
 Modules.Assigner = require("Assigner")
-Modules.ShiftUpMaintainer = require("ShiftUpMaintainer")
+Modules.Maintainer = require("Maintainer")
+Modules.ShiftUpper = require("ShiftUpper")
+Modules.Shifter = require("Shifter")
 Modules.Driver = require("Driver")
 
 local VNS = {VNSCLASS = true}
@@ -100,6 +102,10 @@ function VNS:deleteChild(idS)
 	if self.childrenAssignTS ~= nil then
 		self.childrenAssignTS[idS] = nil
 	end
+end
+
+function VNS.move()
+	print("VNS.move need to be implemented")
 end
 
 return VNS

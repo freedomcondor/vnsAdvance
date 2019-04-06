@@ -12,6 +12,14 @@ local VNS = require("VNS")
 
 VNS.EnableModules = {
 	VNS.Modules.ParentWaitorDeny,
+	VNS.Modules.LostCounter,
+
+	--VNS.Modules.Assigner,
+	--VNS.Modules.Maintainer,
+	--VNS.Modules.ShiftUpper,
+	VNS.Modules.Shifter,
+
+	--VNS.Modules.RandomWalker,
 	VNS.Modules.Driver,
 }
 
@@ -34,9 +42,10 @@ end
 -------------------------------------------------------------------
 function step()
 	print("----------" .. IF.myIDS() .. "------------------")
-	--showTable(vns)
 
 	vns:run()
+
+	print("parent = ", vns.parentS)
 end
 
 -------------------------------------------------------------------
@@ -58,7 +67,11 @@ VNS.Msg.Packet.receiveDataAAN = function()
 	return robot.radios["radio_0"].rx_data
 end
 
-VNS.Modules.Driver.move = function(transV3, rotateV3)
+VNS.Modules.Driver.move = function(transV3, rotateV3) --legacy mode
+	VNS.move(transV3, rotateV3)
+end
+
+VNS.move = function(transV3, rotateV3)
 	local left = transV3.x
 	local right = transV3.x
 

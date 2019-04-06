@@ -32,7 +32,12 @@ function showTable(table, number, dontShowS)
 
 		str = str .. tostring(i) .. "\t"
 
-		if type(v) == "table" then
+		if type(v) == "table" and v.CLASSQUATERNION == true then
+			local ang = v:getAng()
+			if v:getAxis().z < 0 then ang = -ang end
+			str = str .. tostring(ang*180/math.pi)
+			print(str)
+		elseif type(v) == "table" then
 			print(str)
 			showTable(v, number + 1, dontShowS)
 		else

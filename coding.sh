@@ -1,12 +1,15 @@
 vim coding.sh -c "
-	tabnew testing/structureTest.argos
-	tabnew testing/structureTest_vehicle.lua
-	vsp testing/structureTest_quadcopter.lua
+	tabnew testing/shifterTest.argos
+	tabnew testing/shifterTest_vehicle.lua
+	vsp testing/shifterTest_quadcopter.lua
 
 	tabnew VNS.lua
 
+	tabnew VNSModules/ShiftUpper.lua
+	vsp VNSModules/Shifter.lua
+
 	tabnew VNSModules/Assigner.lua
-	vsp VNSModules/ShiftUpMaintainer.lua
+	vsp VNSModules/Maintainer.lua
 
 	tabnew VNSModules/Driver.lua
 
