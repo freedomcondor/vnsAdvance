@@ -13,6 +13,8 @@ function Maintainer:new()
 	local instance = Assigner:new()
 	setmetatable(instance, self)
 
+	instance.allocated = {}
+
 	--[[
 	local structure = {
 		locV3 = Vec3:create(),
@@ -37,17 +39,30 @@ end
 function Maintainer:setStructure(vns, structure)
 	self.structure = structure
 
-	-- re allocate every child
+	-- re-allocate/re-assign every child
+	self:reset(vns)
+	--[[
 	for idS, childVns in pairs(vns.childrenTVns) do
 		childVns.allocated = nil
 	end
+	--]]
+end
+
+function Maintainer:reset(vns)
+	Assigner.reset(self, vns)
+	self.allocated = {}
+end
+
+function Maintainer:deleteChild(idS)
+	Assigner.deleteChild(self, idS)
+	self.allocated[idS] = nil
 end
 
 function Maintainer:run(vns)
 	Assigner.run(self, vns)
 
 	for _, msgM in ipairs(vns.Msg.getAM(vns.parentS, "branch")) do
-		self:setStructure(vns, msgM.dataT.structure)
+		self:setStructure(vns, vns.Msg.recoverTable(msgM.dataT.structure))
 	end
 
 	-- allocate branch
@@ -63,10 +78,10 @@ function Maintainer:run(vns)
 			-- some branch is not fulfilled
 			if branchT.actorS == nil then
 				for idS, childVns in pairs(vns.childrenTVns) do
-					if childVns.allocated == nil and 
+					if self.allocated[idS] == nil and 
 					   childVns.robotType == branchT.robotType then
 						branchT.actorS = idS
-						childVns.allocated = true
+						self.allocated[idS] = true
 						childVns.rallyPoint = {
 							locV3 = branchT.locV3,
 							dirQ = branchT.dirQ,
@@ -81,7 +96,7 @@ function Maintainer:run(vns)
 
 	-- more children set rallypoint to 0
 	for idS, childVns in pairs(vns.childrenTVns) do
-		if childVns.allocated == nil then
+		if self.allocated[idS] == nil then
 			--self:assign(idS, vns.parentS, vns)
 			childVns.rallyPoint = {
 				locV3 = Vec3:create(),

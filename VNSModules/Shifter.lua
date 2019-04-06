@@ -16,13 +16,11 @@ function Shifter:new()
 	instance.need = {}
 	-- instance.need[id] = {vehicle = 4, quadcopter = 5}
 	
-	instance.childrenAssignTarget = {}
-	-- instance.assigning[childid] = "id"
-	
 	return instance
 end
 
 function Shifter:run(vns)
+	print("I am shifter run")
 	Maintainer.run(self, vns)
 
 	for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "need")) do
@@ -30,38 +28,6 @@ function Shifter:run(vns)
 		   vns.childrenTVns[msgM.fromS] ~= nil then
 			self.need[msgM.fromS] = msgM.dataT
 		end
-
-		--[[
-		-- for branches
-		if vns.childrenTVns[msgM.fromS] ~= nil then
-			for _,robotType in ipairs({"vehicle","quadcopter"}) do
-				-- count already assigned robots, if more, call back
-				for idS, childVns in pairs(vns.childrenTVns) do
-					if self.childrenAssignTarget[idS] == msgM.fromS and
-					   vns.childrenTVns[idS].robotType == robotType then
-						if self.need[msgM.fromS][robotType] > 0 then
-							self.need[msgM.fromS][robotType] = self.need[msgM.fromS][robotType] - 1
-						else
-							self.childrenAssignTarget[idS] = nil
-							self:unsign(idS)
-						end
-					end
-				end
-
-				-- assign more
-				for idS, childVns in pairs(vns.childrenTVns) do
-					if self.need[msgM.fromS][robotType] <= 0 then break end
-					if self.childrenAssignTarget[idS] == nil and 
-					   childVns.allocated == nil then
-						self:assign(idS, msgM.fromS, vns) 
-							-- TODO: assign and unsign in the same time may cause problems
-						self.childrenAssignTarget[idS] = msgM.fromS
-						self.need[msgM.fromS][robotType] = self.need[msgM.fromS][robotType] - 1
-					end
-				end
-			end
-		end
-		--]]
 	end
 
 	-- count unallocated branches
@@ -70,17 +36,27 @@ function Shifter:run(vns)
 	   self.structure.children ~= nil then
 		for _, branchT in ipairs(self.structure.children) do
 			if branchT.actorS == nil then
-				unAllocatedBranchTN[branchT.robotType] = unAllocatedBranchTN[branchT.robotType] + 1
+				unAllocatedBranchTN[branchT.robotType] = 
+					unAllocatedBranchTN[branchT.robotType] + 1
 			end
 		end
 	end
 
+	print("branch count")
+	showTable(unAllocatedBranchTN)
+
 	-- count more robots
 	local moreRobotsTN = {vehicle = 0, quadcopter = 0}
 	for idS, childVns in pairs(vns.childrenTVns) do
-		if childVns.allocated == nil and instance.childrenAssignTarget[idS] == nil then
+		if self.allocated[idS] == nil and 
+		   self.childrenAssignTS[idS] == nil then
+			moreRobotsTN[childVns.robotType] = 
+				moreRobotsTN[childVns.robotType] + 1
 		end
 	end
+
+	print("more robot")
+	showTable(moreRobotsTN)
 end
 
 return Shifter

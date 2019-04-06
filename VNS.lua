@@ -62,10 +62,7 @@ function VNS:create(option)
 		-- used by connector and lostcount module
 
 	instance.myAssignParent = nil
-	instance.childrenAssignTS = {}
 		-- used by Assigner
-
-	instance.allocated
 	--]]
 
 	return instance
@@ -85,7 +82,7 @@ function VNS:reset()
 
 	for i, moduleM in pairs(self.modules) do
 		if type(moduleM.reset) == "function" then 
-			moduleM:reset() 
+			moduleM:reset(self) 
 		end
 	end
 end
@@ -99,8 +96,10 @@ end
 function VNS:deleteChild(idS)
 	self.childrenTVns[idS] = nil
 
-	if self.childrenAssignTS ~= nil then
-		self.childrenAssignTS[idS] = nil
+	for i, moduleM in pairs(self.modules) do
+		if type(moduleM.deleteChild) == "function" then 
+			moduleM:deleteChild(idS)
+		end
 	end
 end
 

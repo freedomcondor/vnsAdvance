@@ -37,11 +37,7 @@ function Driver:run(vns, paraT)
 			msgM.dataT.yourDirQ
 		)
 
-		if vns.move == nil then		-- legacy
-			self.move(transV3, rotateV3)
-		else
-			vns.move(transV3, rotateV3)
-		end
+		vns.move(transV3, rotateV3)
 	end
 
 	-- send drive to children

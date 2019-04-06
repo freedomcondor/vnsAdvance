@@ -15,9 +15,9 @@ VNS.EnableModules = {
 	VNS.Modules.LostCounter,
 
 	--VNS.Modules.Assigner,
-	--VNS.Modules.Maintainer,
+	VNS.Modules.Maintainer,
 	--VNS.Modules.ShiftUpper,
-	VNS.Modules.Shifter,
+	--VNS.Modules.Shifter,
 
 	--VNS.Modules.RandomWalker,
 	VNS.Modules.Driver,

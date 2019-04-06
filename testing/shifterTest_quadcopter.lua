@@ -59,6 +59,12 @@ function init()
 			{	locV3 = Vec3:create(0, dis*2, 0),
 				dirQ = Quaternion:create(0,0,1, -math.pi/2),
 				robotType = "quadcopter",
+				children = {
+					{	locV3 = Vec3:create(-dis, 0, 0),
+						dirQ = Quaternion:create(0,0,1, 0),
+						robotType = "vehicle",
+					},
+				},
 			},
 		},
 	}
@@ -81,8 +87,6 @@ function step()
 	print("parent = ", vns.parentS)
 	print("childrenTVns = ")
 	showTable(vns.childrenTVns, 1, "modules")
-	print("childrenAssignTS = ")
-	showTable(vns.childrenAssignTS, 1)
 end
 
 -------------------------------------------------------------------
@@ -168,10 +172,6 @@ end
 
 VNS.Msg.Packet.receiveDataAAN = function()
 	return robot.radios["radio_0"].rx_data
-end
-
-VNS.Modules.Driver.move = function(transV3, rotateV3) --legacy mode
-	VNS.move(transV3, rotateV3)
 end
 
 VNS.move = function(transV3, rotateV3)

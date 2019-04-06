@@ -133,7 +133,11 @@ VNS.Msg.Packet.receiveDataAAN = function()
 	return robot.radios["radio_0"].rx_data
 end
 
-VNS.Modules.Driver.move = function(transV3, rotateV3)
+VNS.Modules.Driver.move = function(transV3, rotateV3) --legacy mode
+	VNS.move(transV3, rotateV3)
+end
+
+VNS.move = function(transV3, rotateV3)
 	local speedscale = 0.3
 	local turnscale = 1
 	local x = transV3.x * speedscale

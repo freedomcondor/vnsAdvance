@@ -12,6 +12,7 @@ function Assigner:new()
 	setmetatable(instance, self)
 
 	instance.parentLocV3 = Vec3:create()
+	instance.childrenAssignTS = {}
 
 	return instance
 end
@@ -49,11 +50,11 @@ function Assigner:run(vns)
 	end
 
 	-- allcate children
-	if vns.childrenAssignTS == nil then return end
+	if self.childrenAssignTS == nil then return end
 
 	for idS, childVns in pairs(vns.childrenTVns) do
-		if vns.childrenAssignTS[idS] ~= nil then
-			local assignToS = vns.childrenAssignTS[idS]
+		if self.childrenAssignTS[idS] ~= nil then
+			local assignToS = self.childrenAssignTS[idS]
 			if vns.childrenTVns[assignToS] ~= nil then
 				childVns.rallyPoint = {
 					locV3 = vns.childrenTVns[assignToS].locV3,
@@ -71,14 +72,15 @@ function Assigner:run(vns)
 end
 
 function Assigner:assign(_childidS, _assignToIds, vns)
-	if vns.childrenAssignTS == nil then
-		vns.childrenAssignTS = {} end
-	vns.childrenAssignTS[_childidS] = _assignToIds
+	if self.childrenAssignTS == nil then
+		self.childrenAssignTS = {} end
+	self.childrenAssignTS[_childidS] = _assignToIds
 	vns.Msg.send(_childidS, "assign", {assignToS = _assignToIds})
 
 	--update rally point immediately
 	local assignToS = _assignToIds
 	local childVns = vns.childrenTVns[_childidS]
+	if childVns == nil then return end
 	if vns.childrenTVns[assignToS] ~= nil then
 		childVns.rallyPoint = {
 			locV3 = vns.childrenTVns[assignToS].locV3,
@@ -94,8 +96,8 @@ function Assigner:assign(_childidS, _assignToIds, vns)
 end
 
 function Assigner:unsign(_childidS, vns)
-	if vns.childrenAssignTS ~= nil then
-		vns.childrenAssignTS[_childidS] = nil
+	if self.childrenAssignTS ~= nil then
+		self.childrenAssignTS[_childidS] = nil
 	end
 	vns.Msg.send(_childidS, "assign", {assignToS = nil})
 
@@ -104,6 +106,15 @@ function Assigner:unsign(_childidS, vns)
 		locV3 = Vec3:create(),
 		dirQ = Quaternion:create(),
 	}
+end
+
+function Assigner:deleteChild(idS)
+	self.childrenAssignTS[idS] = nil
+end
+
+function Assigner:reset(vns)
+	self.childrenAssignTS = {}
+	vns.myAssignParent = nil
 end
 
 return Assigner

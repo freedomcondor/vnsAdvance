@@ -20,7 +20,7 @@ function ShiftUpper:run(vns)
 
 	-- more children give to parent
 	for idS, childVns in pairs(vns.childrenTVns) do
-		if childVns.allocated == nil then
+		if self.allocated[idS] == nil then
 			self:assign(idS, vns.parentS, vns)
 		end
 	end

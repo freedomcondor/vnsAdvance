@@ -38,3 +38,12 @@ vim coding.sh -c "
 #	tabnew testing/assignTest.argos
 #	tabnew testing/assignTest_vehicle.lua
 #	vsp testing/assignTest_quadcopter.lua
+
+#	tabnew testing/shifterTest.argos
+#	tabnew testing/shifterTest_vehicle.lua
+#	vsp testing/shifterTest_quadcopter.lua
+
+#	tabnew testing/maintainerTest.argos
+#	tabnew testing/maintainerTest_vehicle.lua
+#	vsp testing/maintainerTest_quadcopter.lua
+

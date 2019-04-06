@@ -41,23 +41,38 @@ function Message.getAM(fromS, cmdS)
 	return listAM
 end
 
+function Message.recoverTable(table)
+	if type(table) ~= "table" then return table end
+	for i, v in pairs(table) do
+		table[i] = Message.recoverTable(v)
+		table[i] = Message.recoverV3(table[i])
+		table[i] = Message.recoverQ(table[i])
+	end
+	return table
+end
+
 function Message.recoverV3(v3T)
+	if type(v3T) ~= "table" then return v3T end
 	if type(v3T.x) == "number" and 
 	   type(v3T.y) == "number" and 
 	   type(v3T.z) == "number" then
 		return Vec3:create(v3T.x, v3T.y, v3T.z)
 	else
-		return nil
+		return v3T
 	end
 end
 
 function Message.recoverQ(qT)
+	if type(qT) ~= "table" then return qT end
 	qT.v = Message.recoverV3(qT.v)
-	if qT.v ~= nil and 
+	if type(qT.v) == "table" and 
+	   type(qT.v.x) == "number" and
+	   type(qT.v.y) == "number" and
+	   type(qT.v.z) == "number" and
 	   type(qT.w) == "number" then
 		return Quaternion:createFromHardValue(qT.v.x, qT.v.y, qT.v.z, qT.w)
 	else
-		return nil
+		return qT
 	end
 end
 
