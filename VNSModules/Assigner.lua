@@ -17,7 +17,6 @@ function Assigner:new()
 end
 
 function Assigner:run(vns)
-	-- Shoule happens before connector
 	-------------
 	--  recruit from myAssignParent --> ack
 	--  							--> bye
@@ -55,14 +54,14 @@ function Assigner:run(vns)
 				}
 			elseif vns.parentS == assignToS then
 				-- update parentLoc by drive message
-				for _,msgM in ipairs(vns.parentS, "drive") do
+				for _,msgM in ipairs(vns.Msg.getAM(vns.parentS, "drive")) do
 					local yourLocV3 = vns.Msg.recoverV3(msgM.dataT.yourLocV3)
 					local yourDirQ = vns.Msg.recoverQ(msgM.dataT.yourDirQ)
 					self.parentLocV3 = Linar.myVecToYou(Vec3:create(), yourLocV3, yourDirQ)
 					break
 				end
 				childVns.rallyPoint = {
-					locV3 = vns.childrenTVns[assignToS].locV3,
+					locV3 = self.parentLocV3,
 					dirQ = Quaternion:create()
 				}
 			end

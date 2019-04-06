@@ -18,6 +18,7 @@ Modules.ParentWaitorDeny = require("ParentWaitorDeny")
 Modules.LostCounter = require("LostCounter")
 Modules.RandomWalker = require("RandomWalker")
 Modules.Assigner = require("Assigner")
+Modules.ShiftUpMaintainer = require("ShiftUpMaintainer")
 Modules.Driver = require("Driver")
 
 local VNS = {VNSCLASS = true}
@@ -60,6 +61,8 @@ function VNS:create(option)
 	instance.myAssignParent = nil
 	instance.childrenAssignTS = {}
 		-- used by Assigner
+
+	instance.allocated
 	--]]
 
 	return instance
