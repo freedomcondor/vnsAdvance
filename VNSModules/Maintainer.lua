@@ -96,8 +96,8 @@ function Maintainer:run(vns)
 
 	-- more children set rallypoint to 0
 	for idS, childVns in pairs(vns.childrenTVns) do
-		if self.allocated[idS] == nil then
-			--self:assign(idS, vns.parentS, vns)
+		if self.allocated[idS] == nil and
+		   self.childrenAssignTS[idS] == nil then
 			childVns.rallyPoint = {
 				locV3 = Vec3:create(),
 				dirQ = Quaternion:create(),

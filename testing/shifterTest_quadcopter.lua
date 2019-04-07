@@ -87,6 +87,8 @@ function step()
 	print("parent = ", vns.parentS)
 	print("childrenTVns = ")
 	showTable(vns.childrenTVns, 1, "modules")
+	print("AssignTable")
+	showTable(vns.modules[4].childrenAssignTS, 1)
 end
 
 -------------------------------------------------------------------
