@@ -80,13 +80,10 @@ function Shifter:run(vns)
 				if need[idS][childVnsmore.robotType] > 0 then
 					if self.allocated[idSmore] == nil and 
 					   self.childrenAssignTS[idSmore] == nil then
-						print("i am assign", idSmore)
 						self:assign(idSmore, idS, vns)
 						need[idS][childVnsmore.robotType] =
 						need[idS][childVnsmore.robotType] - 1
 					end
-				else
-					break
 				end
 			end
 		end 
@@ -106,8 +103,8 @@ function Shifter:run(vns)
 		end
 	end
 
-	print("branch count")
-	showTable(unAllocatedBranchTN)
+	--print("branch count")
+	--showTable(unAllocatedBranchTN)
 
 	-- count more robots
 	local moreRobotsTN = Counter:new()
@@ -121,8 +118,8 @@ function Shifter:run(vns)
 		end
 	end
 
-	print("more robot")
-	showTable(moreRobotsTN)
+	--print("more robot")
+	--showTable(moreRobotsTN)
 
 	-- add children needs
 	local totalNeedTN = Counter:new()
@@ -140,13 +137,31 @@ function Shifter:run(vns)
 	totalNeedTN = Counter:add(totalNeedTN, unAllocatedBranchTN)
 	totalNeedTN = Counter:add(totalNeedTN, moreRobotsTN)
 
-	print("total need")
-	showTable(totalNeedTN)
+	--print("total need")
+	--showTable(totalNeedTN)
 
 	-- send need to parent
 	if vns.parentS == nil then
 		self.getBranch = false
 	else
+		local needForParent = Counter:add(totalNeedTN, self.need[vns.parentS])
+		for idS, childVns in pairs(vns.childrenTVns) do
+			if self.allocated[idS] == nil and 
+		   	   self.childrenAssignTS[idS] == vns.parentS then
+				needForParent[childVns.robotType] = 
+					needForParent[childVns.robotType] - 1
+			end
+		end
+
+		if self.getBranch == true and
+	   	   Counter:equel(needForParent, 
+		                 self.myLastSentNeed[vns.parentS]) 
+		   == false then
+			vns.Msg.send(vns.parentS, "need", needForParent)
+			self.myLastSentNeed[vns.parentS] = needForParent
+		end
+
+		--[[
 		print("coutner sub")
 		showTable(Counter:sub(totalNeedTN, self.need[vns.parentS]),
 		          1)
@@ -169,6 +184,7 @@ function Shifter:run(vns)
 			                self.need[vns.parentS])
 							--TODO: sub number assigned to parent
 		end
+		--]]
 	end
 
 	-- assign more to parent

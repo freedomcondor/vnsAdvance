@@ -20,12 +20,12 @@ function RandomWalker:run(vns)
 	local x = math.random() - 0.5
 	local y = math.random() - 0.5
 	local z = 0
-	local transV3 = Vec3:create(x,y,z):nor() * 0.5
+	local transV3 = Vec3:create(x,y,z):nor() * 1.5
 
 	x = 0
 	y = 0 
 	z = math.random() - 0.5
-	local rotateV3 = Vec3:create(x,y,z):nor() * 0.5
+	local rotateV3 = Vec3:create(x,y,z):nor() * 1.5
 
 	vns.move(transV3, rotateV3)
 end

@@ -56,10 +56,18 @@ function Driver:run(vns, paraT)
 		--print("childQuaternion", ang*180/math.pi)
 
 		-- calc speed
-		local childTransV3 = robotVns.rallyPoint.locV3 - robotVns.locV3
+		local timestep = 1 / 150
+		local childTransV3 =  robotVns.rallyPoint.locV3 
+		                    + (transV3 + rotateV3 * robotVns.locV3) * timestep
+		                    - robotVns.locV3
 		if childTransV3:len() < 30 then childTransV3 = Vec3:create()
 		                           else childTransV3 = childTransV3:nor() end
-		local childRotateQ = robotVns.rallyPoint.dirQ * robotVns.dirQ:inv()
+		local childRotateQ = robotVns.rallyPoint.dirQ 
+		                    * Quaternion:create(rotateV3.x,
+		                                        rotateV3.y,
+		                                        rotateV3.z,
+		                                        rotateV3:len() * timestep)
+		                    * robotVns.dirQ:inv()
 		local ang = childRotateQ:getAng()
 		if ang > math.pi then ang = ang - math.pi * 2 end
 		local childRotateV3 = (childRotateQ:getAxis() * ang):nor()
@@ -67,8 +75,10 @@ function Driver:run(vns, paraT)
 		                           			else childRotateV3 = childRotateV3:nor() end
 
 		-- add parent move offset		-- TODO: may cause loop accumulate
-		--childTransV3 = childTransV3 + transV3 + rotateV3 * robotVns.locV3
-		--childRotateV3 = childRotateV3 + rotateV3
+		--[[
+		childTransV3 = (childTransV3 + (transV3 + rotateV3 * robotVns.locV3) * 0.2):nor()
+		childRotateV3 = (childRotateV3 + rotateV3 * 0.2):nor()
+		--]]
 
 		vns.Msg.send(robotVns.idS, "drive",
 			{	yourLocV3 = robotVns.locV3,

@@ -11,7 +11,8 @@ vim coding.sh -c "
 	tabnew VNSModules/Assigner.lua
 	vsp VNSModules/Maintainer.lua
 
-	tabnew VNSModules/Driver.lua
+	tabnew VNSModules/RandomWalker.lua
+	vsp VNSModules/Driver.lua
 
 	tabnew VNSModules/VehicleConnector.lua
 	vsp VNSModules/QuadcopterConnector.lua

@@ -23,7 +23,7 @@ VNS.EnableModules = {
 	--VNS.Modules.ShiftUpper,
 	VNS.Modules.Shifter,
 
-	--VNS.Modules.RandomWalker,
+	VNS.Modules.RandomWalker,
 	VNS.Modules.Driver,
 }
 
@@ -38,34 +38,59 @@ function init()
 		locV3 = Vec3:create(),
 		dirQ = Quaternion:create(),
 		children = {
-			{	locV3 = Vec3:create(-dis, -dis, 0),
+			{	robotType = "vehicle",
+				locV3 = Vec3:create(-dis, dis, 0),
 				dirQ = Quaternion:create(0,0,1, 0),
-				robotType = "vehicle",
 			},
-
-			{	locV3 = Vec3:create(dis, -dis, 0),
+			{	robotType = "vehicle",
+				locV3 = Vec3:create(dis, dis, 0),
 				dirQ = Quaternion:create(0,0,1, 0),
-				robotType = "vehicle",
 			},
-			{	locV3 = Vec3:create(-dis, dis, 0),
+			{	robotType = "vehicle",
+				locV3 = Vec3:create(-dis, -dis, 0),
 				dirQ = Quaternion:create(0,0,1, 0),
-				robotType = "vehicle",
 			},
-			{	locV3 = Vec3:create(dis, dis, 0),
+			{	robotType = "vehicle",
+				locV3 = Vec3:create(dis, -dis, 0),
 				dirQ = Quaternion:create(0,0,1, 0),
-				robotType = "vehicle",
 			},
-
-			{	locV3 = Vec3:create(0, dis*2, 0),
+			{	robotType = "quadcopter",
+				locV3 = Vec3:create(0, dis*2, 0),
 				dirQ = Quaternion:create(0,0,1, -math.pi/2),
-				robotType = "quadcopter",
 				children = {
-					{	locV3 = Vec3:create(-dis, 0, 0),
+					{	robotType = "vehicle",
+						locV3 = Vec3:create(-dis, -dis, 0),
 						dirQ = Quaternion:create(0,0,1, 0),
-						robotType = "vehicle",
+					},
+					{	robotType = "vehicle",
+						locV3 = Vec3:create(-dis, dis, 0),
+						dirQ = Quaternion:create(0,0,1, 0),
+					},
+					{	robotType = "quadcopter",
+						locV3 = Vec3:create(-dis*2, dis*2, 0),
+						dirQ = Quaternion:create(0,0,1, 0),
 					},
 				},
 			},
+			{	robotType = "quadcopter",
+				locV3 = Vec3:create(0,-dis*2, 0),
+				dirQ = Quaternion:create(0,0,1, math.pi/2),
+				children = {
+					{	robotType = "vehicle",
+						locV3 = Vec3:create(-dis, -dis, 0),
+						dirQ = Quaternion:create(0,0,1, 0),
+					},
+					{	robotType = "vehicle",
+						locV3 = Vec3:create(-dis, dis, 0),
+						dirQ = Quaternion:create(0,0,1, 0),
+					},
+					{	robotType = "quadcopter",
+						locV3 = Vec3:create(-dis*2, dis*2, 0),
+						dirQ = Quaternion:create(0,0,1, 0),
+					},
+				},
+			},
+
 		},
 	}
 
@@ -87,6 +112,9 @@ function step()
 	print("parent = ", vns.parentS)
 	print("childrenTVns = ")
 	showTable(vns.childrenTVns, 1, "modules")
+	for i, v in pairs(vns.childrenTVns) do
+		print("\t", i)
+	end
 	print("AssignTable")
 	showTable(vns.modules[4].childrenAssignTS, 1)
 end
