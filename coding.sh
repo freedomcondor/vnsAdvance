@@ -1,7 +1,7 @@
 vim coding.sh -c "
-	tabnew testing/shifterTest.argos
-	tabnew testing/shifterTest_vehicle.lua
-	vsp testing/shifterTest_quadcopter.lua
+	tabnew structure.argos
+	tabnew structure_vehicle.lua
+	vsp structure_quadcopter.lua
 
 	tabnew VNS.lua
 
@@ -48,3 +48,6 @@ vim coding.sh -c "
 #	tabnew testing/maintainerTest_vehicle.lua
 #	vsp testing/maintainerTest_quadcopter.lua
 
+#	tabnew structure.argos
+#	tabnew structure_vehicle.lua
+#	vsp structure_quadcopter.lua

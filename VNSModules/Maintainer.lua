@@ -14,6 +14,7 @@ function Maintainer:new()
 	setmetatable(instance, self)
 
 	instance.allocated = {}
+	instance.lastSendBrain = {}
 
 	--[[
 	local structure = {
@@ -51,20 +52,40 @@ end
 function Maintainer:reset(vns)
 	Assigner.reset(self, vns)
 	self.allocated = {}
+	self.lastSendBrain = {}
 end
 
 function Maintainer:deleteChild(idS)
 	Assigner.deleteChild(self, idS)
 	self.allocated[idS] = nil
+	self.lastSendBrain[idS] = nil
 end
 
 function Maintainer:run(vns)
 	Assigner.run(self, vns)
 
+	-- about brain
+	if vns.parentS == nil then vns.brainS = vns.idS end
+
+	for _, msgM in ipairs(vns.Msg.getAM(vns.parentS, "brain")) do
+		if vns.brainS ~= msgM.dataT.brainS then
+			vns.brainS = msgM.dataT.brainS
+		end
+	end
+
+	for idS, childVns in pairs(vns.childrenTVns) do
+		if self.lastSendBrain[idS] ~= vns.brainS then
+			vns.Msg.send(idS, "brain", {brainS = vns.brainS})
+			self.lastSendBrain[idS] = vns.brainS
+		end
+	end
+
 	for _, msgM in ipairs(vns.Msg.getAM(vns.parentS, "branch")) do
 		self:setStructure(vns, vns.Msg.recoverTable(msgM.dataT.structure))
 	end
 
+	-- about structure
+	
 	-- allocate branch
 	if self.structure ~= nil and
 	   self.structure.children ~= nil then

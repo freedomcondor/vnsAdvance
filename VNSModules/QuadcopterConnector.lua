@@ -38,8 +38,8 @@ function QuadcopterConnector:run(vns, paraT)
 
 	-- deny all recruit from not my parent
 	for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "recruit")) do
-		if msgM.fromS ~= vns.parentS and msgM.fromS ~= vns.AssignParent then --check assigner
-			vns.Msg.send(msgM.fromS, "deny", {myParent = vns.parentS})
+		if msgM.fromS ~= vns.parentS and msgM.fromS ~= vns.myAssignParent then --check assigner
+			vns.Msg.send(msgM.fromS, "deny", {myParentS = vns.parentS})
 		end
 	end
 
@@ -48,9 +48,9 @@ function QuadcopterConnector:run(vns, paraT)
 		vns.Msg.send(vns.parentS, "reportForDuty", {mySight = paraT.vehiclesTR})
 	end
 
-	-- if I don't have a parent, report back to deny source
-	if vns.parentS == nil then
-		for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "deny")) do
+	-- if I don't have a parent, or deny come from myAssign Parent report back to deny source
+	for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "deny")) do
+		if vns.parentS == nil or vns.myAssignParent == msgM.dataT.myParentS then
 			vns.Msg.send(msgM.dataT.myParentS, "reportForDuty", {mySight = paraT.vehiclesTR})
 		end
 	end

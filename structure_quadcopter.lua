@@ -1,9 +1,9 @@
 ------------------------------------------------------------------------
 --   Global Variables
 ------------------------------------------------------------------------
-package.path = package.path .. ";../?.lua"
-package.path = package.path .. ";../math/?.lua"
-package.path = package.path .. ";../VNSModules/?.lua"
+package.path = package.path .. ";math/?.lua"
+package.path = package.path .. ";VNSModules/?.lua"
+package.path = package.path .. ";testing/?.lua"
 --require("debugger")
 require("TableTools")
 
@@ -68,18 +68,46 @@ function init()
 						locV3 = Vec3:create(-dis, dis, 0),
 						dirQ = Quaternion:create(0,0,1, 0),
 					},
-					--[[
 					{	robotType = "quadcopter",
-						locV3 = Vec3:create(-dis*2, dis*2, 0),
-						dirQ = Quaternion:create(0,0,1, 0),
+						locV3 = Vec3:create(0, -dis*2, 0),
+						dirQ = Quaternion:create(0,0,1, math.pi/2),
+						children = {
+							{	robotType = "vehicle",
+								locV3 = Vec3:create(-dis, -dis, 0),
+								dirQ = Quaternion:create(0,0,1, 0),
+							},
+							{	robotType = "vehicle",
+								locV3 = Vec3:create(-dis, dis, 0),
+								dirQ = Quaternion:create(0,0,1, 0),
+							},
+						},
+					},
+					{	robotType = "quadcopter",
+						locV3 = Vec3:create(0, dis*2, 0),
+						dirQ = Quaternion:create(0,0,1, -math.pi/2),
 					},
 					{	robotType = "quadcopter",
 						locV3 = Vec3:create(-dis*2, 0, 0),
 						dirQ = Quaternion:create(0,0,1, 0),
+						children = {
+							{	robotType = "vehicle",
+								locV3 = Vec3:create(-dis, -dis, 0),
+								dirQ = Quaternion:create(0,0,1, 0),
+							},
+							{	robotType = "vehicle",
+								locV3 = Vec3:create(-dis, dis, 0),
+								dirQ = Quaternion:create(0,0,1, 0),
+							},
+							{	robotType = "quadcopter",
+								locV3 = Vec3:create(-dis*2, 0, 0),
+								dirQ = Quaternion:create(0,0,1, -math.pi/2),
+							},
+						},
 					},
-					--]]
 				},
 			},
+
+			--[[
 			{	robotType = "quadcopter",
 				locV3 = Vec3:create(0,dis*2, 0),
 				dirQ = Quaternion:create(0,0,1, -math.pi/2),
@@ -88,7 +116,6 @@ function init()
 						locV3 = Vec3:create(-dis, -dis, 0),
 						dirQ = Quaternion:create(0,0,1, 0),
 					},
-				--[[
 					{	robotType = "vehicle",
 						locV3 = Vec3:create(-dis, dis, 0),
 						dirQ = Quaternion:create(0,0,1, 0),
@@ -97,13 +124,13 @@ function init()
 						locV3 = Vec3:create(-dis*2, dis*2, 0),
 						dirQ = Quaternion:create(0,0,1, 0),
 					},
-				--]]
 				},
 			},
+			--]]
 		},
 	}
 
-	vns = VNS:new{id = IF.myIDS()}
+	vns = VNS:new{idS = IF.myIDS()}
 	vns.modules[4]:setStructure(vns, structure)
 
 	if IF.myIDS() == "quadcopter0" then
@@ -120,12 +147,13 @@ end
 
 -------------------------------------------------------------------
 function step()
-	--print("----------" .. IF.myIDS() .. "------------------")
+	print("----------" .. IF.myIDS() .. "------------------")
 
 	vns:run{vehiclesTR = getVehicleTR()}
+	print("brain", vns.brainS)
 	print("parent = ", vns.parentS)
 	print("childrenTVns = ")
-	showTable(vns.childrenTVns, 1, "modules")
+	--showTable(vns.childrenTVns, 1, "modules")
 	for i, v in pairs(vns.childrenTVns) do
 		print("\t", i)
 	end

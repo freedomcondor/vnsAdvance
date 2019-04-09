@@ -38,6 +38,7 @@ function VNS:create(option)
 	setmetatable(instance, self)
 
 	instance.idS = option.idS
+	instance.brainS = instance.idS
 	instance.locV3 = option.locV3 or Vec3:create()
 	instance.dirQ = option.dirQ or Quaternion:create()
 	instance.parentS = nil
