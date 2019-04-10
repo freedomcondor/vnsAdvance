@@ -21,7 +21,7 @@ function RandomWalker:run(vns)
 	local x = math.random()
 	local y = math.random() - 0.5
 	local z = 0
-	local transV3 = Vec3:create(x,y,z):nor() * 1.5
+	local transV3 = Vec3:create(x,y,z):nor() * 0.5
 
 	x = 0
 	y = 0 

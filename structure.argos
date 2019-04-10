@@ -45,12 +45,12 @@
         <joints implementation="default">
           <joint id="axis2_body" mode="position"/>
         </joints>
-        <cameras implementation="default" show_frustum="true">
+        <cameras implementation="default" show_frustum="false">
           <camera id="fixed_camera" range="0.01:0.47" resolution="640,480"
                   anchor="body" position="0,0,-0.01" orientation="0,0,180"
                   focal_length="350,350" principal_point="320,240">
             <led_detector medium="leds" show_rays="false"/>
-            <tag_detector medium="apriltags" show_rays="true"/>
+            <tag_detector medium="apriltags" show_rays="false"/>
           </camera>
         </cameras>
         <radios implementation="default" show_rays="false"/>
@@ -339,7 +339,7 @@
     </prototype>
 
     <prototype id="quadcopter5" movable="false">
-		<body position="0.5,-2.0,0.5" orientation="90,0,0" /> <!-- border range is wrong -->
+		<body position="0.5,-1.5,0.5" orientation="90,0,0" /> <!-- border range is wrong -->
       <controller config="quadcopter_controller"/>
       <links ref="axis0">
         <link id="axis0" geometry="sphere" radius="0" mass="0.001"

@@ -89,6 +89,7 @@ function VNS:reset()
 end
 
 function VNS:run(paraT)
+	self.Msg.prestep()
 	for i, moduleM in ipairs(self.modules) do
 		moduleM:run(self, paraT)
 	end

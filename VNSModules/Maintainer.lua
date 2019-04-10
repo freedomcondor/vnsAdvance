@@ -37,6 +37,11 @@ function Maintainer:new()
 	return instance
 end
 
+function Maintainer:setGene(vns, structure)
+	self:setStructure(vns, structure)
+	self.gene = structure
+end
+
 function Maintainer:setStructure(vns, structure)
 	self.structure = structure
 
@@ -66,8 +71,26 @@ function Maintainer:run(vns)
 
 	-- about brain
 	if vns.parentS == nil then vns.brainS = vns.idS end
+	if vns.parentS == nil and self.oldParentS ~= vns.parentS then
+		self:setStructure(vns, self.gene)
+	end
+	self.oldParentS = vns.parentS
+
+	for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "loop_bye")) do
+		if vns.childrenTVns[msgM.fromS] ~= nil then
+			self:deleteChild(msgM.fromS)
+		end
+	end
 
 	for _, msgM in ipairs(vns.Msg.getAM(vns.parentS, "brain")) do
+		if msgM.dataT.brainS == vns.idS then
+			-- some loop is happenning
+			vns.Msg.send(vns.parentS, "loop_bye")
+			vns.parentS = nil
+			vns.brainS = vns.idS
+			break
+		end
+
 		if vns.brainS ~= msgM.dataT.brainS then
 			vns.brainS = msgM.dataT.brainS
 		end
@@ -80,12 +103,11 @@ function Maintainer:run(vns)
 		end
 	end
 
+	-- about branch
 	for _, msgM in ipairs(vns.Msg.getAM(vns.parentS, "branch")) do
 		self:setStructure(vns, vns.Msg.recoverTable(msgM.dataT.structure))
 	end
 
-	-- about structure
-	
 	-- allocate branch
 	if self.structure ~= nil and
 	   self.structure.children ~= nil then

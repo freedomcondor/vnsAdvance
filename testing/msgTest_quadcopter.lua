@@ -2,6 +2,7 @@
 --   Global Variables
 ------------------------------------------------------------------------
 package.path = package.path .. ";../?.lua"
+package.path = package.path .. ";../math/?.lua"
 --require("debugger")
 Message = require("Message")
 
@@ -39,7 +40,8 @@ end
 
 -------------------------------------------------------------------
 function step()
-	showTable(Message.getAM())
+	Message.prestep()
+	showTable(Message.getAM("ALLMSG", "ALLMSG"))
 end
 
 -------------------------------------------------------------------

@@ -38,7 +38,6 @@ function init()
 		locV3 = Vec3:create(),
 		dirQ = Quaternion:create(),
 		children = {
-			--[[
 			{	robotType = "vehicle",
 				locV3 = Vec3:create(dis, dis, 0),
 				dirQ = Quaternion:create(0,0,1, 0),
@@ -47,7 +46,6 @@ function init()
 				locV3 = Vec3:create(dis, -dis, 0),
 				dirQ = Quaternion:create(0,0,1, 0),
 			},
-			--]]
 			{	robotType = "vehicle",
 				locV3 = Vec3:create(-dis, -dis, 0),
 				dirQ = Quaternion:create(0,0,1, 0),
@@ -85,6 +83,17 @@ function init()
 					{	robotType = "quadcopter",
 						locV3 = Vec3:create(0, dis*2, 0),
 						dirQ = Quaternion:create(0,0,1, -math.pi/2),
+						children = {
+							{	robotType = "vehicle",
+								locV3 = Vec3:create(-dis, -dis, 0),
+								dirQ = Quaternion:create(0,0,1, 0),
+							},
+							{	robotType = "vehicle",
+								locV3 = Vec3:create(-dis, dis, 0),
+								dirQ = Quaternion:create(0,0,1, 0),
+							},
+						},
+
 					},
 					{	robotType = "quadcopter",
 						locV3 = Vec3:create(-dis*2, 0, 0),
@@ -100,38 +109,28 @@ function init()
 							},
 							{	robotType = "quadcopter",
 								locV3 = Vec3:create(-dis*2, 0, 0),
-								dirQ = Quaternion:create(0,0,1, -math.pi/2),
+								dirQ = Quaternion:create(0,0,1, 0),
+								children = {
+									{	robotType = "vehicle",
+										locV3 = Vec3:create(-dis, -dis, 0),
+										dirQ = Quaternion:create(0,0,1, 0),
+									},
+									{	robotType = "vehicle",
+										locV3 = Vec3:create(-dis, dis, 0),
+										dirQ = Quaternion:create(0,0,1, 0),
+									},
+								},
 							},
 						},
 					},
 				},
 			},
-
-			--[[
-			{	robotType = "quadcopter",
-				locV3 = Vec3:create(0,dis*2, 0),
-				dirQ = Quaternion:create(0,0,1, -math.pi/2),
-				children = {
-					{	robotType = "vehicle",
-						locV3 = Vec3:create(-dis, -dis, 0),
-						dirQ = Quaternion:create(0,0,1, 0),
-					},
-					{	robotType = "vehicle",
-						locV3 = Vec3:create(-dis, dis, 0),
-						dirQ = Quaternion:create(0,0,1, 0),
-					},
-					{	robotType = "quadcopter",
-						locV3 = Vec3:create(-dis*2, dis*2, 0),
-						dirQ = Quaternion:create(0,0,1, 0),
-					},
-				},
-			},
-			--]]
 		},
 	}
 
 	vns = VNS:new{idS = IF.myIDS()}
-	vns.modules[4]:setStructure(vns, structure)
+	--vns.modules[4]:setStructure(vns, structure)
+	vns.modules[4]:setGene(vns, structure)
 
 	if IF.myIDS() == "quadcopter0" then
 		vns.modules[5] = vns.modules[6]

@@ -29,7 +29,7 @@
         <radios implementation="default" show_rays="false"/>
         <proximity implementation="default" show_rays="true"/>
       </sensors>
-      <params script="cmdTest_vehicle.lua" />
+      <params script="msgTest_vehicle.lua" />
     </lua_controller>
 
     <lua_controller id="quadcopter_controller">
@@ -55,7 +55,7 @@
         </cameras>
         <radios implementation="default" show_rays="false"/>
       </sensors>
-      <params script="cmdTest_quadcopter.lua" />
+      <params script="msgTest_quadcopter.lua" />
     </lua_controller>
 
   </controllers>

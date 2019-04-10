@@ -2,6 +2,7 @@
 --   Global Variables
 ------------------------------------------------------------------------
 package.path = package.path .. ";../?.lua"
+package.path = package.path .. ";../math/?.lua"
 --require("debugger")
 Message = require("Message")
 
