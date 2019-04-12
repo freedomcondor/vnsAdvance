@@ -58,6 +58,12 @@ function Maintainer:reset(vns)
 	Assigner.reset(self, vns)
 	self.allocated = {}
 	self.lastSendBrain = {}
+	if self.structure ~= nil and
+	   self.structure.children ~= nil then
+		for _, branchT in ipairs(self.structure.children) do
+			branchT.actorS = nil
+		end
+	end
 end
 
 function Maintainer:deleteChild(idS)
@@ -108,7 +114,7 @@ function Maintainer:run(vns)
 		self:setStructure(vns, vns.Msg.recoverTable(msgM.dataT.structure))
 	end
 
-	-- allocate branch
+	-- allocate branch -- TODO: hungarian 
 	if self.structure ~= nil and
 	   self.structure.children ~= nil then
 		for _, branchT in ipairs(self.structure.children) do
@@ -120,18 +126,31 @@ function Maintainer:run(vns)
 
 			-- some branch is not fulfilled
 			if branchT.actorS == nil then
+				-- try find the nearest child
+				local nearestId = nil
+				local nearestLen = 9999999
 				for idS, childVns in pairs(vns.childrenTVns) do
 					if self.allocated[idS] == nil and 
 					   childVns.robotType == branchT.robotType then
-						branchT.actorS = idS
-						self.allocated[idS] = true
-						childVns.rallyPoint = {
-							locV3 = branchT.locV3,
-							dirQ = branchT.dirQ,
-						}
-						vns.Msg.send(idS, "branch", {structure = branchT})
-						break
+						local len = (childVns.locV3 - branchT.locV3):len()
+						if len < nearestLen then
+							nearestLen = len
+							nearestId = idS
+						end
 					end
+				end
+
+				if nearestId ~= nil then
+					if self.childrenAssignTS[nearestId] ~= nil then
+						self:unsign(nearestId, vns)
+					end
+					branchT.actorS = nearestId 
+					self.allocated[nearestId] = true
+					vns.childrenTVns[nearestId].rallyPoint = {
+						locV3 = branchT.locV3,
+						dirQ = branchT.dirQ,
+					}
+					vns.Msg.send(nearestId, "branch", {structure = branchT})
 				end
 			end
 		end

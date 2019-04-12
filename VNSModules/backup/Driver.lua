@@ -56,39 +56,6 @@ function Driver:run(vns, paraT)
 		--print("childQuaternion", ang*180/math.pi)
 
 		-- calc speed
-		local totalTransV3, totalRotateV3
-		--rallypointspeed
-		local rallypointScalar = 2
-		local dV3 = robotVns.rallyPoint.locV3 - robotVns.locV3
-		local d = dV3:len()
-		local rallypointTransV3 = rallypointScalar / d * dV3:nor()
-		--local rallypointTransV3 = dV3
-
-		local rotateQ = robotVns.rallyPoint.dirQ * robotVns.dirQ:inv()
-		local ang = rotateQ:getAng()
-		if ang > math.pi then ang = ang - math.pi * 2 end
-		local rallypointRotateV3 = rotateQ:getAxis() * ang
-
-		if d < 30 then rallypointTransV3 = Vec3:create() end
-		if rallypointRotateV3:len() < math.pi/12 then rallypointRotateV3 = Vec3:create() end
-
-		totalTransV3 = rallypointTransV3
-		totalRotateV3 = rallypointRotateV3
-
-		local timestep = 1 / 50
-		--parent speed
-		local parentScalar = 0
-		totalTransV3 = totalTransV3 + (transV3+rotateV3*robotVns.locV3) * timestep * parentScalar
-		totalRotateV3 = totalRotateV3 + rotateV3 * timestep * parentScalar
-
-		--obstacle avoidence
-		local avoiderScalar = 15
-		if robotVns.avoiderSpeed ~= nil then
-		totalTransV3 = totalTransV3 + robotVns.avoiderSpeed.locV3 * avoiderScalar
-		totalRotateV3 = totalRotateV3 + robotVns.avoiderSpeed.dirV3 * avoiderScalar
-		end
-
-		--[[
 		local timestep = 1 / 50
 		local childTransV3 =  robotVns.rallyPoint.locV3 
 		                    + (transV3 + rotateV3 * robotVns.locV3) * timestep
@@ -117,10 +84,8 @@ function Driver:run(vns, paraT)
 		vns.Msg.send(robotVns.idS, "drive",
 			{	yourLocV3 = robotVns.locV3,
 				yourDirQ = robotVns.dirQ,
-				--transV3 = childTransV3,
-				--rotateV3 = childRotateV3,
-				transV3 = totalTransV3:nor(),
-				rotateV3 = totalRotateV3:nor(),
+				transV3 = childTransV3,
+				rotateV3 = childRotateV3,
 			}
 		)
 	end

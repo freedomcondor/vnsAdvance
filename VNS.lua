@@ -21,6 +21,7 @@ Modules.Assigner = require("Assigner")
 Modules.Maintainer = require("Maintainer")
 Modules.ShiftUpper = require("ShiftUpper")
 Modules.Shifter = require("Shifter")
+Modules.Avoider = require("Avoider")
 Modules.Driver = require("Driver")
 
 local VNS = {VNSCLASS = true}
@@ -58,6 +59,12 @@ function VNS:create(option)
 		dirQ = Quaternion:create(),
 	}
 		-- used by driver module
+	
+	instance.avoiderSpeed = {
+		locV3 = Vec3:create(),
+		dirQ = Quaternion:create(),
+	}
+		-- used by driver and avoider module
 	
 	instance.updated
 		-- used by connector and lostcount module

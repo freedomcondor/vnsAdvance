@@ -42,11 +42,15 @@ function Assigner:run(vns)
 	end
 
 	-- update parentLoc by drive message
-	for _,msgM in ipairs(vns.Msg.getAM(vns.parentS, "drive")) do
-		local yourLocV3 = vns.Msg.recoverV3(msgM.dataT.yourLocV3)
-		local yourDirQ = vns.Msg.recoverQ(msgM.dataT.yourDirQ)
-		self.parentLocV3 = Linar.myVecToYou(Vec3:create(), yourLocV3, yourDirQ)
-		break
+	if vns.parentS ~= nil then
+		for _,msgM in ipairs(vns.Msg.getAM(vns.parentS, "drive")) do
+			local yourLocV3 = vns.Msg.recoverV3(msgM.dataT.yourLocV3)
+			local yourDirQ = vns.Msg.recoverQ(msgM.dataT.yourDirQ)
+			self.parentLocV3 = Linar.myVecToYou(Vec3:create(), yourLocV3, yourDirQ)
+			break
+		end
+	else
+		self.parentLocV3 = Vec3:create()
 	end
 
 	-- allcate children

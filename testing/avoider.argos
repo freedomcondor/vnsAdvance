@@ -29,7 +29,7 @@
         <radios implementation="default" show_rays="false"/>
         <proximity implementation="default" show_rays="true"/>
       </sensors>
-      <params script="structure_vehicle.lua" />
+      <params script="avoider_vehicle.lua" />
     </lua_controller>
 
     <lua_controller id="quadcopter_controller">
@@ -45,17 +45,17 @@
         <joints implementation="default">
           <joint id="axis2_body" mode="position"/>
         </joints>
-        <cameras implementation="default" show_frustum="true">
+        <cameras implementation="default" show_frustum="false">
           <camera id="fixed_camera" range="0.01:0.47" resolution="640,480"
                   anchor="body" position="0,0,-0.01" orientation="0,0,180"
                   focal_length="350,350" principal_point="320,240">
             <led_detector medium="leds" show_rays="false"/>
-            <tag_detector medium="apriltags" show_rays="true"/>
+            <tag_detector medium="apriltags" show_rays="false"/>
           </camera>
         </cameras>
         <radios implementation="default" show_rays="false"/>
       </sensors>
-      <params script="structure_quadcopter.lua" />
+      <params script="avoider_quadcopter.lua" />
     </lua_controller>
 
   </controllers>

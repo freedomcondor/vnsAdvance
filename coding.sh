@@ -1,18 +1,20 @@
 vim coding.sh -c "
-	tabnew structure.argos
-	tabnew structure_vehicle.lua
-	vsp structure_quadcopter.lua
+	tabnew testing/avoider.argos
+	tabnew testing/avoider_vehicle.lua
+	vsp testing/avoider_quadcopter.lua
 
 	tabnew VNS.lua
+
+	tabnew VNSModules/Avoider.lua
+
+	tabnew VNSModules/RandomWalker.lua
+	vsp VNSModules/Driver.lua
 
 	tabnew VNSModules/ShiftUpper.lua
 	vsp VNSModules/Shifter.lua
 
 	tabnew VNSModules/Assigner.lua
 	vsp VNSModules/Maintainer.lua
-
-	tabnew VNSModules/RandomWalker.lua
-	vsp VNSModules/Driver.lua
 
 	tabnew VNSModules/VehicleConnector.lua
 	vsp VNSModules/QuadcopterConnector.lua
@@ -23,6 +25,10 @@ vim coding.sh -c "
 	tabnew VNSModules/LostCounter.lua
 	vsp VNSModules/Connector.lua
 "
+
+#	tabnew testing/structure.argos
+#	tabnew testing/structure_vehicle.lua
+#	vsp testing/structure_quadcopter.lua
 
 #	tabnew testing/lostTest.argos
 #	tabnew testing/lostTest_vehicle.lua

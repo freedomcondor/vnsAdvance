@@ -24,6 +24,7 @@ VNS.EnableModules = {
 	VNS.Modules.Shifter,
 
 	VNS.Modules.RandomWalker,
+	VNS.Modules.Avoider,
 	VNS.Modules.Driver,
 }
 
@@ -134,7 +135,8 @@ function init()
 
 	if IF.myIDS() == "quadcopter0" then
 		vns.modules[5] = vns.modules[6]
-		vns.modules[6] = nil
+		vns.modules[6] = vns.modules[7]
+		vns.modules[7] = nil
 	end
 	reset()
 end
