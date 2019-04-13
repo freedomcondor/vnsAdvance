@@ -23,6 +23,8 @@ function Assigner:run(vns)
 	--  							--> bye
 	--
 	
+	--TODO; parentWaitorDeny and this may ack two different at the same time
+	-- add a parentlost method for vns
 	for _, msgM in ipairs(vns.Msg.getAM(vns.myAssignParent, "recruit")) do
 		vns.Msg.send(msgM.fromS, "ack")
 		if vns.myAssignParent ~= vns.parentS then

@@ -62,13 +62,14 @@ function Avoider.add(myLocV3, obLocV3, obDirQ, accumulatorV3, threshold)
 	if d < threshold then
 		local transV3 = 1 / d * dV3:nor()
 		local rotatedDV3 = Linar.myVecToYou(dV3, obLocV3, obDirQ)
+		local roundV3 = 1 / d * dV3:nor()
 		local q
 		if rotatedDV3.x < 0 then
-			q = Quaternion:create(0, 0, 1, math.pi/2 * d/threshold)
+			q = Quaternion:create(0, 0, 1, math.pi/2) --* d/threshold)
 		else
-			q = Quaternion:create(0, 0, 1, math.pi/2 * d/threshold)
+			q = Quaternion:create(0, 0, 1, math.pi/2) --* d/threshold)
 		end
-		ans = ans + q:toRotate(transV3)
+		ans = ans + transV3 + q:toRotate(roundV3)
 	end
 
 	return ans
