@@ -24,6 +24,7 @@ function Avoider:run(vns, paraT)
 		childVns.avoiderSpeed.locV3 = Vec3:create()
 
 		if childVns.robotType == "quadcopter" then
+			-- avoid my parent TODO
 			-- avoid my self
 			childVns.avoiderSpeed.locV3 =
 				Avoider.add(childVns.locV3, Vec3:create(), Quaternion:create(),

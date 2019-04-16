@@ -46,6 +46,7 @@ end
 function Shifter:run(vns)
 	Maintainer.run(self, vns)
 
+	-- clear need if lost parent TODO
 	-- receive need
 	for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "need")) do
 		if msgM.fromS == vns.parentS or 
