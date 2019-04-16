@@ -1,7 +1,7 @@
 vim coding.sh -c "
-	tabnew testing/avoider.argos
-	tabnew testing/avoider_vehicle.lua
-	vsp testing/avoider_quadcopter.lua
+	tabnew structure.argos
+	tabnew structure_vehicle.lua
+	vsp structure_quadcopter.lua
 
 	tabnew VNS.lua
 
@@ -25,6 +25,10 @@ vim coding.sh -c "
 	tabnew VNSModules/LostCounter.lua
 	vsp VNSModules/Connector.lua
 "
+
+#	tabnew testing/avoider.argos
+#	tabnew testing/avoider_vehicle.lua
+#	vsp testing/avoider_quadcopter.lua
 
 #	tabnew testing/structure.argos
 #	tabnew testing/structure_vehicle.lua
