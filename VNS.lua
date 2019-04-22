@@ -62,7 +62,7 @@ function VNS:create(option)
 	
 	instance.avoiderSpeed = {
 		locV3 = Vec3:create(),
-		dirQ = Quaternion:create(),
+		dirV3 = Vec3:create(),
 	}
 		-- used by driver and avoider module
 	
@@ -80,13 +80,22 @@ function VNS:reset()
 	self.locV3 = Vec3:create()
 	self.dirQ = Quaternion:create()
 
-	self.parentS = nil
 	self.rallyPoint = {	
 		-- used by driver module
 		locV3 = Vec3:create(),
 		dirQ = Quaternion:create(),
 	}
-	self.childrenTVns = {}
+
+	self.avoiderSpeed= {	
+		-- used by driver module
+		locV3 = Vec3:create(),
+		dirV3 = Vec3:create(),
+	}
+
+	self:deleteParent()
+	for idS, _ in pairs(self.childrenTVns) do
+		self:deleteChild(idS)
+	end
 
 	for i, moduleM in pairs(self.modules) do
 		if type(moduleM.reset) == "function" then 
@@ -103,13 +112,22 @@ function VNS:run(paraT)
 end
 
 function VNS:deleteChild(idS)
-	self.childrenTVns[idS] = nil
-
 	for i, moduleM in pairs(self.modules) do
 		if type(moduleM.deleteChild) == "function" then 
 			moduleM:deleteChild(idS)
 		end
 	end
+	self.childrenTVns[idS] = nil
+end
+
+function VNS:deleteParent()
+	if self.parentS == nil then return end
+	for i, moduleM in pairs(self.modules) do
+		if type(moduleM.deleteParent) == "function" then 
+			moduleM:deleteParent(self)
+		end
+	end
+	self.parentS = nil
 end
 
 function VNS.move()

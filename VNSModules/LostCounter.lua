@@ -32,12 +32,12 @@ function LostCounter:run(vns)
 
 		if self.parentcount == 3 then
 			vns.Msg.send(vns.parentS, "lost_bye")
-			vns.parentS = nil
+			vns:deleteParent()
 		end
 
 		-- get lost by parent
 		for _, msgM in ipairs(vns.Msg.getAM(vns.parentS, "lost_dismiss")) do
-			vns.parentS = nil
+			vns:deleteParent()
 			break
 		end
 	end

@@ -72,16 +72,16 @@ function Maintainer:deleteChild(idS)
 	self.lastSendBrain[idS] = nil
 end
 
+function Maintainer:deleteParent(vns)
+	Assigner.deleteParent(self, vns)
+	vns.brainS = vns.idS
+	self:setStructure(vns, self.gene)
+end
+
 function Maintainer:run(vns)
 	Assigner.run(self, vns)
 
 	-- about brain
-	if vns.parentS == nil then vns.brainS = vns.idS end
-	if vns.parentS == nil and self.oldParentS ~= vns.parentS then
-		self:setStructure(vns, self.gene)
-	end
-	self.oldParentS = vns.parentS
-
 	for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "loop_bye")) do
 		if vns.childrenTVns[msgM.fromS] ~= nil then
 			self:deleteChild(msgM.fromS)
@@ -92,7 +92,7 @@ function Maintainer:run(vns)
 		if msgM.dataT.brainS == vns.idS then
 			-- some loop is happenning
 			vns.Msg.send(vns.parentS, "loop_bye")
-			vns.parentS = nil
+			vns:deleteParent()
 			vns.brainS = vns.idS
 			break
 		end

@@ -38,6 +38,12 @@ function Shifter:deleteChild(idS)
 	self.myLastSentNeed[idS] = nil
 end
 
+function Shifter:deleteParent(vns)
+	Maintainer.deleteParent(self, vns)
+	self.need[vns.parentS] = nil
+	self.myLastSentNeed[vns.parentS] = nil
+end
+
 function Shifter:setStructure(vns, structure)
 	Maintainer.setStructure(self, vns, structure)
 	self.getBranch = true
@@ -46,7 +52,6 @@ end
 function Shifter:run(vns)
 	Maintainer.run(self, vns)
 
-	-- clear need if lost parent TODO
 	-- receive need
 	for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "need")) do
 		if msgM.fromS == vns.parentS or 

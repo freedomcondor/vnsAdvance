@@ -23,10 +23,6 @@ function Assigner:run(vns)
 	--  							--> bye
 	--
 	
-	--TODO; parentWaitorDeny and this may ack two different at the same time
-	-- add a parentlost method for vns
-	if vns.parentS == nil then vns.myAssignParent = nil end -- temporary solution
-
 	for _, msgM in ipairs(vns.Msg.getAM(vns.myAssignParent, "recruit")) do
 		vns.Msg.send(msgM.fromS, "ack")
 		if vns.myAssignParent ~= vns.parentS then
@@ -118,6 +114,11 @@ end
 
 function Assigner:deleteChild(idS)
 	self.childrenAssignTS[idS] = nil
+end
+
+function Assigner:deleteParent(vns)
+	self.parentLocV3 = Vec3:create()
+	vns.myAssignParent = nil
 end
 
 function Assigner:reset(vns)

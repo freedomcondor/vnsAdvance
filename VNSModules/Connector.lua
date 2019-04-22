@@ -26,7 +26,7 @@ function Connector:step(vns, robotListR)
 		if vns.childrenTVns[idS] == nil and 
 		   self.waitingTVns[idS] == nil and 
 		   vns.parentS ~= idS and
-		   vns.brainS ~= idS then -- TODO: still can't elinimate loop
+		   vns.brainS ~= idS then
 			self:recruit(robotR, vns, self.robotType)
 		end
 	end

@@ -10,10 +10,28 @@ Avoider.__index = Avoider
 function Avoider:new()
 	local instance = {}
 	setmetatable(instance, self)
+	instance.parentLocV3 = Vec3:create()
 	return instance
 end
 
+function Avoider:deleteParent(vns)
+	self.parentLocV3 = Vec3:create()
+end
+
 function Avoider:run(vns, paraT)
+	-- update parentLoc by drive message
+	if vns.parentS ~= nil then
+		for _,msgM in ipairs(vns.Msg.getAM(vns.parentS, "drive")) do
+			local yourLocV3 = vns.Msg.recoverV3(msgM.dataT.yourLocV3)
+			local yourDirQ = vns.Msg.recoverQ(msgM.dataT.yourDirQ)
+			self.parentLocV3 = Linar.myVecToYou(Vec3:create(), yourLocV3, yourDirQ)
+			break
+		end
+	else
+		self.parentLocV3 = Vec3:create()
+	end
+
+	-- for each children avoid
 	for idS, childVns in pairs(vns.childrenTVns) do
 		if childVns.avoiderSpeed == nil then
 			childVns.avoiderSpeed = {
@@ -24,7 +42,12 @@ function Avoider:run(vns, paraT)
 		childVns.avoiderSpeed.locV3 = Vec3:create()
 
 		if childVns.robotType == "quadcopter" then
-			-- avoid my parent TODO
+			-- avoid my parent
+			childVns.avoiderSpeed.locV3 =
+				Avoider.add(childVns.locV3, self.parentLocV3, Quaternion:create(),
+				            childVns.avoiderSpeed.locV3,
+				            60)
+
 			-- avoid my self
 			childVns.avoiderSpeed.locV3 =
 				Avoider.add(childVns.locV3, Vec3:create(), Quaternion:create(),
