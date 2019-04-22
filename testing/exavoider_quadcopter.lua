@@ -1,9 +1,9 @@
 ------------------------------------------------------------------------
 --   Global Variables
 ------------------------------------------------------------------------
-package.path = package.path .. ";math/?.lua"
-package.path = package.path .. ";VNSModules/?.lua"
-package.path = package.path .. ";testing/?.lua"
+package.path = package.path .. ";../?.lua"
+package.path = package.path .. ";../math/?.lua"
+package.path = package.path .. ";../VNSModules/?.lua"
 --require("debugger")
 require("TableTools")
 
@@ -23,8 +23,10 @@ VNS.EnableModules = {
 	--VNS.Modules.ShiftUpper,
 	VNS.Modules.Shifter,
 
-	VNS.Modules.RandomWalker,
+	--VNS.Modules.Avoider,
 	VNS.Modules.ExAvoider,
+
+	VNS.Modules.RandomWalker,
 	VNS.Modules.Driver,
 }
 
@@ -68,6 +70,35 @@ function init()
 						dirQ = Quaternion:create(0,0,1, 0),
 					},
 					{	robotType = "quadcopter",
+						locV3 = Vec3:create(0, -dis*2, 0),
+						dirQ = Quaternion:create(0,0,1, math.pi/2),
+						children = {
+							{	robotType = "vehicle",
+								locV3 = Vec3:create(-dis, -dis, 0),
+								dirQ = Quaternion:create(0,0,1, 0),
+							},
+							{	robotType = "vehicle",
+								locV3 = Vec3:create(-dis, dis, 0),
+								dirQ = Quaternion:create(0,0,1, 0),
+							},
+						},
+					},
+					{	robotType = "quadcopter",
+						locV3 = Vec3:create(0, dis*2, 0),
+						dirQ = Quaternion:create(0,0,1, -math.pi/2),
+						children = {
+							{	robotType = "vehicle",
+								locV3 = Vec3:create(-dis, -dis, 0),
+								dirQ = Quaternion:create(0,0,1, 0),
+							},
+							{	robotType = "vehicle",
+								locV3 = Vec3:create(-dis, dis, 0),
+								dirQ = Quaternion:create(0,0,1, 0),
+							},
+						},
+
+					},
+					{	robotType = "quadcopter",
 						locV3 = Vec3:create(-dis*2, 0, 0),
 						dirQ = Quaternion:create(0,0,1, 0),
 						children = {
@@ -95,36 +126,6 @@ function init()
 							},
 						},
 					},
-					{	robotType = "quadcopter",
-						locV3 = Vec3:create(0, dis*2, 0),
-						dirQ = Quaternion:create(0,0,1, -math.pi/2),
-						children = {
-							{	robotType = "vehicle",
-								locV3 = Vec3:create(-dis, -dis, 0),
-								dirQ = Quaternion:create(0,0,1, 0),
-							},
-							{	robotType = "vehicle",
-								locV3 = Vec3:create(-dis, dis, 0),
-								dirQ = Quaternion:create(0,0,1, 0),
-							},
-						},
-
-					},
-					{	robotType = "quadcopter",
-						locV3 = Vec3:create(0, -dis*2, 0),
-						dirQ = Quaternion:create(0,0,1, math.pi/2),
-						children = {
-							{	robotType = "vehicle",
-								locV3 = Vec3:create(-dis, -dis, 0),
-								dirQ = Quaternion:create(0,0,1, 0),
-							},
-							{	robotType = "vehicle",
-								locV3 = Vec3:create(-dis, dis, 0),
-								dirQ = Quaternion:create(0,0,1, 0),
-							},
-						},
-					},
-
 				},
 			},
 		},
@@ -135,7 +136,7 @@ function init()
 	vns.modules[4]:setGene(vns, structure)
 
 	if IF.myIDS() == "quadcopter0" then
-		vns.modules[5] = vns.modules[6]
+		--vns.modules[5] = vns.modules[6]
 		vns.modules[6] = vns.modules[7]
 		vns.modules[7] = nil
 	end
@@ -151,7 +152,7 @@ end
 function step()
 	print("----------" .. IF.myIDS() .. "------------------")
 
-	vns:run{vehiclesTR = getVehicleTR(), boxesTR = getBoxesTR()}
+	vns:run{vehiclesTR = getVehicleTR(), boxesTR = getBoxesTR(),}
 	print("brain", vns.brainS)
 	print("parent = ", vns.parentS)
 	print("childrenTVns = ")
@@ -162,6 +163,7 @@ function step()
 	print("AssignTable")
 	showTable(vns.modules[4].childrenAssignTS, 1)
 	print("myAssignParent", vns.myAssignParent)
+	test = vns
 end
 
 -------------------------------------------------------------------
@@ -234,6 +236,28 @@ function calcDir(center, target)
 	return Quaternion:create(0,0,1, rad)
 end
 
+function getBoxesTR()
+	local boxesTR = {}   -- vt for vector, which a table = {x,y}
+	for i, ledDetectionT in ipairs(IF.getLEDsT()) do	
+		-- a detection is a table
+		-- {center = {x,y}, color = {blue, green, red}}
+		local locV3, dirQ, colorS = getBoxInfo(ledDetectionT)
+		boxesTR[i] = {locV3 = locV3, dirQ = dirQ, colorS = colorS}
+	end	
+	return boxesTR
+end
+
+function getBoxInfo(detection)
+	local x = detection.center.x - 320
+	local y = detection.center.y - 240
+	y = -y
+	local z = 0
+	local locV3 = Vec3:create(x,y,z)
+	local dirQ = Quaternion:create()
+	local colorS = "red"
+	return locV3, dirQ, colorS
+end
+
 ------------------------------------------------------------------------
 --   VNS Callback Functions
 ------------------------------------------------------------------------
@@ -257,28 +281,6 @@ VNS.move = function(transV3, rotateV3)
 	local w = rotateV3:len() * turnscale
 	if rotateV3.z < 0 then w = -w end
 	IF.setVelocity(x, y, w)
-end
-
-function getBoxesTR()
-	local boxesTR = {}   -- vt for vector, which a table = {x,y}
-	for i, ledDetectionT in ipairs(IF.getLEDsT()) do	
-		-- a detection is a table
-		-- {center = {x,y}, color = {blue, green, red}}
-		local locV3, dirQ, colorS = getBoxInfo(ledDetectionT)
-		boxesTR[i] = {locV3 = locV3, dirQ = dirQ, colorS = colorS}
-	end	
-	return boxesTR
-end
-
-function getBoxInfo(detection)
-	local x = detection.center.x - 320
-	local y = detection.center.y - 240
-	y = -y
-	local z = 0
-	local locV3 = Vec3:create(x,y,z)
-	local dirQ = Quaternion:create()
-	local colorS = "red"
-	return locV3, dirQ, colorS
 end
 
 ------------------------------------------------------------------------

@@ -6,6 +6,7 @@ vim coding.sh -c "
 	tabnew VNS.lua
 
 	tabnew VNSModules/Avoider.lua
+	vsp VNSModules/ExAvoider.lua
 
 	tabnew VNSModules/RandomWalker.lua
 	vsp VNSModules/Driver.lua
@@ -25,6 +26,10 @@ vim coding.sh -c "
 	tabnew VNSModules/LostCounter.lua
 	vsp VNSModules/Connector.lua
 "
+
+#	tabnew testing/exavoider.argos
+#	tabnew testing/exavoider_vehicle.lua
+#	vsp testing/exavoider_quadcopter.lua
 
 #	tabnew testing/avoider.argos
 #	tabnew testing/avoider_vehicle.lua

@@ -22,6 +22,7 @@ Modules.Maintainer = require("Maintainer")
 Modules.ShiftUpper = require("ShiftUpper")
 Modules.Shifter = require("Shifter")
 Modules.Avoider = require("Avoider")
+Modules.ExAvoider = require("ExAvoider")
 Modules.Driver = require("Driver")
 
 local VNS = {VNSCLASS = true}
