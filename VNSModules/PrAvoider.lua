@@ -1,4 +1,4 @@
--- Preditor Avoider --------------------------------------
+-- Predator Avoider --------------------------------------
 ------------------------------------------------------
 local Vec3 = require("Vector3")
 local Quaternion = require("Quaternion")
@@ -73,18 +73,18 @@ function PrAvoider:run(vns, paraT)
 	end end
 
 	-- check boxes
-	if paraT.preditorsTR ~= nil then
+	if paraT.predatorsTR ~= nil then
 		local stimulateSpeed = {
 			locV3 = Vec3:create(),
 			dirV3 = Vec3:create(),
 		}
 
-		print("preditor table")
-		showTable(paraT.preditorsTR)
+		print("predator table")
+		showTable(paraT.predatorsTR)
 
-		for i, preditorR in ipairs(paraT.preditorsTR) do
+		for i, predatorR in ipairs(paraT.predatorsTR) do
 			stimulateSpeed.locV3 = 
-			PrAvoider.add(preditorR.locV3, preditorR.dirQ,
+			PrAvoider.add(predatorR.locV3, predatorR.dirQ,
 			              stimulateSpeed.locV3,
 			              60)
 		end

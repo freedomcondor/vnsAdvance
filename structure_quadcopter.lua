@@ -151,7 +151,7 @@ function step()
 
 	vns:run{vehiclesTR = getVehicleTR(), 
 	        boxesTR = getBoxesTR(),
-	        preditorsTR = getPreditorsTR(),}
+	        predatorsTR = getPredatorsTR(),}
 	print("brain", vns.brainS)
 	print("parent = ", vns.parentS)
 	print("childrenTVns = ")
@@ -256,21 +256,21 @@ function getBoxInfo(detection)
 	return locV3, dirQ, colorS
 end
 
-function getPreditorsTR()
-	local preditorsTR = {}   -- vt for vector, which a table = {x,y}
+function getPredatorsTR()
+	local predatorsTR = {}   -- vt for vector, which a table = {x,y}
 	local j = 0
 	for i, ledDetectionT in ipairs(IF.getLEDsT()) do	
 		if ledDetectionT.color.blue > 150 then -- else continue
 		j = j + 1
 		-- a detection is a table
 		-- {center = {x,y}, color = {blue, green, red}}
-		local locV3, dirQ, colorS = getPreditorInfo(ledDetectionT)
-		preditorsTR[j] = {locV3 = locV3, dirQ = dirQ, colorS = colorS}
+		local locV3, dirQ, colorS = getPredatorInfo(ledDetectionT)
+		predatorsTR[j] = {locV3 = locV3, dirQ = dirQ, colorS = colorS}
 	end	end
-	return preditorsTR
+	return predatorsTR
 end
 
-function getPreditorInfo(detection)
+function getPredatorInfo(detection)
 	local x = detection.center.x - 320
 	local y = detection.center.y - 240
 	y = -y
