@@ -29,7 +29,7 @@
         <radios implementation="default" show_rays="false"/>
         <proximity implementation="default" show_rays="false"/>
       </sensors>
-      <params script="structure_vehicle.lua" />
+      <params script="pravoider_vehicle.lua" />
     </lua_controller>
 
     <lua_controller id="quadcopter_controller">
@@ -45,7 +45,7 @@
         <joints implementation="default">
           <joint id="axis2_body" mode="position"/>
         </joints>
-        <cameras implementation="default" show_frustum="false">
+        <cameras implementation="default" show_frustum="true">
           <camera id="fixed_camera" range="0.01:0.47" resolution="640,480"
                   anchor="body" position="0,0,-0.01" orientation="0,0,180"
                   focal_length="350,350" principal_point="320,240">
@@ -55,7 +55,7 @@
         </cameras>
         <radios implementation="default" show_rays="false"/>
       </sensors>
-      <params script="structure_quadcopter.lua" />
+      <params script="pravoider_quadcopter.lua" />
     </lua_controller>
 
   </controllers>
@@ -82,20 +82,20 @@
 
 	<!-- blocks -->
 	<!--
-	-->
     <distribute>
       <position method="uniform" min="0.3,-0.3,0" max="0.6,0.3,0" />
       <orientation method="uniform" min="0,0,0" max="360,0,0" />
       <entity quantity="5" max_trials="100">
-        <box id="a0" size="0.04,0.04,0.02" movable="true" mass="0.05">
+        <box id="b0" size="0.04,0.04,0.02" movable="true" mass="0.05">
           <leds medium="leds">
             <led color="red" anchor="origin" offset="0,0,0.021"/>
           </leds>
         </box>
-	<!--
 	-->
+	<!--
       </entity>
     </distribute>
+	-->
 
     <distribute>
       <position method="uniform" min="0.3,-0.3,0" max="0.6,0.3,0" />
@@ -318,8 +318,8 @@
       </devices>
     </prototype>
 
+	<!--
     <prototype id="quadcopter4" movable="false">
-		<!--body position="0.5,-1.0,0.5" orientation="90,0,0" /--> <!-- border range is wrong -->
       <body position="0.0,0,0.5" orientation="0,0,0" />
       <controller config="quadcopter_controller"/>
       <links ref="axis0">
@@ -352,9 +352,10 @@
         </radios>
       </devices>
     </prototype>
+	-->
 
+	<!--
     <prototype id="quadcopter5" movable="false">
-		<!--body position="0.5,-1.5,0.5" orientation="90,0,0" /--> <!-- border range is wrong -->
       <body position="0.0,0,0.5" orientation="0,0,0" />
       <controller config="quadcopter_controller"/>
       <links ref="axis0">
@@ -387,6 +388,7 @@
         </radios>
       </devices>
     </prototype>
+	-->
 
 
 	<!--

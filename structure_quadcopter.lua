@@ -23,8 +23,11 @@ VNS.EnableModules = {
 	--VNS.Modules.ShiftUpper,
 	VNS.Modules.Shifter,
 
-	VNS.Modules.RandomWalker,
+	VNS.Modules.InAvoider,
 	VNS.Modules.ExAvoider,
+	VNS.Modules.PrAvoider,
+
+	VNS.Modules.RandomWalker,
 	VNS.Modules.Driver,
 }
 
@@ -134,11 +137,6 @@ function init()
 	--vns.modules[4]:setStructure(vns, structure)
 	vns.modules[4]:setGene(vns, structure)
 
-	if IF.myIDS() == "quadcopter0" then
-		vns.modules[5] = vns.modules[6]
-		vns.modules[6] = vns.modules[7]
-		vns.modules[7] = nil
-	end
 	reset()
 end
 
@@ -151,7 +149,9 @@ end
 function step()
 	print("----------" .. IF.myIDS() .. "------------------")
 
-	vns:run{vehiclesTR = getVehicleTR(), boxesTR = getBoxesTR()}
+	vns:run{vehiclesTR = getVehicleTR(), 
+	        boxesTR = getBoxesTR(),
+	        preditorsTR = getPreditorsTR(),}
 	print("brain", vns.brainS)
 	print("parent = ", vns.parentS)
 	print("childrenTVns = ")
@@ -234,6 +234,53 @@ function calcDir(center, target)
 	return Quaternion:create(0,0,1, rad)
 end
 
+function getBoxesTR()
+	local boxesTR = {}   -- vt for vector, which a table = {x,y}
+	for i, ledDetectionT in ipairs(IF.getLEDsT()) do	
+		-- a detection is a table
+		-- {center = {x,y}, color = {blue, green, red}}
+		local locV3, dirQ, colorS = getBoxInfo(ledDetectionT)
+		boxesTR[i] = {locV3 = locV3, dirQ = dirQ, colorS = colorS}
+	end	
+	return boxesTR
+end
+
+function getBoxInfo(detection)
+	local x = detection.center.x - 320
+	local y = detection.center.y - 240
+	y = -y
+	local z = 0
+	local locV3 = Vec3:create(x,y,z)
+	local dirQ = Quaternion:create()
+	local colorS = "red"
+	return locV3, dirQ, colorS
+end
+
+function getPreditorsTR()
+	local preditorsTR = {}   -- vt for vector, which a table = {x,y}
+	local j = 0
+	for i, ledDetectionT in ipairs(IF.getLEDsT()) do	
+		if ledDetectionT.color.blue > 150 then -- else continue
+		j = j + 1
+		-- a detection is a table
+		-- {center = {x,y}, color = {blue, green, red}}
+		local locV3, dirQ, colorS = getPreditorInfo(ledDetectionT)
+		preditorsTR[j] = {locV3 = locV3, dirQ = dirQ, colorS = colorS}
+	end	end
+	return preditorsTR
+end
+
+function getPreditorInfo(detection)
+	local x = detection.center.x - 320
+	local y = detection.center.y - 240
+	y = -y
+	local z = 0
+	local locV3 = Vec3:create(x,y,z)
+	local dirQ = Quaternion:create()
+	local colorS = "blue"
+	return locV3, dirQ, colorS
+end
+
 ------------------------------------------------------------------------
 --   VNS Callback Functions
 ------------------------------------------------------------------------
@@ -259,27 +306,6 @@ VNS.move = function(transV3, rotateV3)
 	IF.setVelocity(x, y, w)
 end
 
-function getBoxesTR()
-	local boxesTR = {}   -- vt for vector, which a table = {x,y}
-	for i, ledDetectionT in ipairs(IF.getLEDsT()) do	
-		-- a detection is a table
-		-- {center = {x,y}, color = {blue, green, red}}
-		local locV3, dirQ, colorS = getBoxInfo(ledDetectionT)
-		boxesTR[i] = {locV3 = locV3, dirQ = dirQ, colorS = colorS}
-	end	
-	return boxesTR
-end
-
-function getBoxInfo(detection)
-	local x = detection.center.x - 320
-	local y = detection.center.y - 240
-	y = -y
-	local z = 0
-	local locV3 = Vec3:create(x,y,z)
-	local dirQ = Quaternion:create()
-	local colorS = "red"
-	return locV3, dirQ, colorS
-end
 
 ------------------------------------------------------------------------
 --  Robot Interface 

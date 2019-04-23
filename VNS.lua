@@ -21,8 +21,9 @@ Modules.Assigner = require("Assigner")
 Modules.Maintainer = require("Maintainer")
 Modules.ShiftUpper = require("ShiftUpper")
 Modules.Shifter = require("Shifter")
-Modules.Avoider = require("Avoider")
+Modules.InAvoider = require("InAvoider")
 Modules.ExAvoider = require("ExAvoider")
+Modules.PrAvoider = require("PrAvoider")
 Modules.Driver = require("Driver")
 
 local VNS = {VNSCLASS = true}
@@ -67,6 +68,12 @@ function VNS:create(option)
 	}
 		-- used by driver and avoider module
 	
+	instance.emergencySpeed = {
+		locV3 = Vec3:create(),
+		dirV3 = Vec3:create(),
+	}
+		-- used by driver and preditor avoider module
+
 	instance.updated
 		-- used by connector and lostcount module
 

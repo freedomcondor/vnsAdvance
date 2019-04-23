@@ -10,13 +10,25 @@ Driver.__index = Driver
 function Driver:new()
 	local instance = {}
 	setmetatable(instance, self)
+	instance.lastReceivedSpeed = {
+		locV3 = Vec3:create(),
+		dirV3 = Vec3:create(),
+	}
 	return instance
+end
+
+function Driver:deleteParent(vns)
+	self.lastReceivedSpeed = {
+		locV3 = Vec3:create(),
+		dirV3 = Vec3:create(),
+	}
 end
 
 function Driver:run(vns, paraT)
 	-- listen to drive from parent
-	local transV3 = Vec3:create() 
-	local rotateV3 = Vec3:create()
+	local chillRate = 0.1
+	self.lastReceivedSpeed.locV3 = self.lastReceivedSpeed.locV3 * chillRate
+	self.lastReceivedSpeed.dirV3 = self.lastReceivedSpeed.dirV3 * chillRate
 	for _, msgM in pairs(vns.Msg.getAM(vns.parentS, "drive")) do
 		-- a drive message data is:
 		--	{	yourLocV3, yourDirQ,
@@ -28,17 +40,29 @@ function Driver:run(vns, paraT)
 		msgM.dataT.yourLocV3 = vns.Msg.recoverV3(msgM.dataT.yourLocV3)
 		msgM.dataT.yourDirQ = vns.Msg.recoverQ(msgM.dataT.yourDirQ)
 
-		transV3 = Linar.mySpeedToYou(
+		local transV3 = Linar.mySpeedToYou(
 			msgM.dataT.transV3,
 			msgM.dataT.yourDirQ
 		)
-		rotateV3 = Linar.mySpeedToYou(
+		local rotateV3 = Linar.mySpeedToYou(
 			msgM.dataT.rotateV3,
 			msgM.dataT.yourDirQ
 		)
 
-		vns.move(transV3, rotateV3)
+		self.lastReceivedSpeed.locV3 = transV3
+		self.lastReceivedSpeed.dirV3 = rotateV3 
 	end
+
+	local transV3 = self.lastReceivedSpeed.locV3
+	local rotateV3 = self.lastReceivedSpeed.dirV3
+	if vns.emergencySpeed ~= nil then
+		local scalar = 1
+		--transV3 = (transV3 + vns.emergencySpeed.locV3 * scalar):nor()
+		--rotateV3 = (rotateV3 + vns.emergencySpeed.dirV3 * scalar):nor()
+		transV3 = transV3 + vns.emergencySpeed.locV3 * scalar
+		rotateV3 = rotateV3 + vns.emergencySpeed.dirV3 * scalar
+	end
+	vns.move(transV3, rotateV3)
 
 	-- send drive to children
 	for _, robotVns in pairs(vns.childrenTVns) do
@@ -57,12 +81,12 @@ function Driver:run(vns, paraT)
 
 		-- calc speed
 		local totalTransV3, totalRotateV3
-		--rallypointspeed
+
+		-- add rallypointspeed
 		local rallypointScalar = 2
 		local dV3 = robotVns.rallyPoint.locV3 - robotVns.locV3
 		local d = dV3:len()
 		local rallypointTransV3 = rallypointScalar / d * dV3:nor()
-		--local rallypointTransV3 = dV3
 
 		local rotateQ = robotVns.rallyPoint.dirQ * robotVns.dirQ:inv()
 		local ang = rotateQ:getAng()
@@ -76,44 +100,22 @@ function Driver:run(vns, paraT)
 		totalRotateV3 = rallypointRotateV3
 
 		local timestep = 1 / 50
-		--parent speed
+		-- add parent speed
 		local parentScalar = 0
 		totalTransV3 = totalTransV3 + (transV3+rotateV3*robotVns.locV3) * timestep * parentScalar
 		totalRotateV3 = totalRotateV3 + rotateV3 * timestep * parentScalar
 
-		--obstacle avoidence
+		-- add obstacle avoidence
 		local avoiderScalar = 15
 		if robotVns.avoiderSpeed ~= nil then
 		totalTransV3 = totalTransV3 + robotVns.avoiderSpeed.locV3 * avoiderScalar
 		totalRotateV3 = totalRotateV3 + robotVns.avoiderSpeed.dirV3 * avoiderScalar
+
+			-- clear avoiderspeed
+		robotVns.avoiderSpeed.locV3 = Vec3:create()
 		end
-
-		--[[
-		local timestep = 1 / 50
-		local childTransV3 =  robotVns.rallyPoint.locV3 
-		                    + (transV3 + rotateV3 * robotVns.locV3) * timestep
-		                    - robotVns.locV3
-		if childTransV3:len() < 30 then childTransV3 = Vec3:create()
-		                           else childTransV3 = childTransV3:nor() end
-		local childRotateQ = robotVns.rallyPoint.dirQ 
-		                    * Quaternion:create(rotateV3.x,
-		                                        rotateV3.y,
-		                                        rotateV3.z,
-		                                        rotateV3:len() * timestep)
-		                    * robotVns.dirQ:inv()
-		local ang = childRotateQ:getAng()
-		if ang > math.pi then ang = ang - math.pi * 2 end
-		local childRotateV3 = (childRotateQ:getAxis() * ang):nor()
-		if childRotateV3:len() < math.pi/12 then childRotateV3 = Vec3:create()
-		                           			else childRotateV3 = childRotateV3:nor() end
-		--]]
-
-		-- add parent move offset		-- TODO: may cause loop accumulate
-		--[[
-		childTransV3 = (childTransV3 + (transV3 + rotateV3 * robotVns.locV3) * 0.2):nor()
-		childRotateV3 = (childRotateV3 + rotateV3 * 0.2):nor()
-		--]]
-
+		
+		-- send drive cmd
 		vns.Msg.send(robotVns.idS, "drive",
 			{	yourLocV3 = robotVns.locV3,
 				yourDirQ = robotVns.dirQ,

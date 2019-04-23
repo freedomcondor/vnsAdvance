@@ -1,24 +1,24 @@
--- Avoider --------------------------------------
+-- Inner Avoider --------------------------------------
 ------------------------------------------------------
 local Vec3 = require("Vector3")
 local Quaternion = require("Quaternion")
 local Linar = require("Linar")
 
-local Avoider = {VNSMODULECLASS = true}
-Avoider.__index = Avoider
+local InAvoider = {VNSMODULECLASS = true}
+InAvoider.__index = InAvoider
 
-function Avoider:new()
+function InAvoider:new()
 	local instance = {}
 	setmetatable(instance, self)
 	instance.parentLocV3 = Vec3:create()
 	return instance
 end
 
-function Avoider:deleteParent(vns)
+function InAvoider:deleteParent(vns)
 	self.parentLocV3 = Vec3:create()
 end
 
-function Avoider:run(vns, paraT)
+function InAvoider:run(vns, paraT)
 	-- update parentLoc by drive message
 	if vns.parentS ~= nil then
 		for _,msgM in ipairs(vns.Msg.getAM(vns.parentS, "drive")) do
@@ -39,18 +39,18 @@ function Avoider:run(vns, paraT)
 				dirV3 = Vec3:create(),
 			}
 		end
-		childVns.avoiderSpeed.locV3 = Vec3:create()
+		--childVns.avoiderSpeed.locV3 = Vec3:create()
 
 		if childVns.robotType == "quadcopter" then
 			-- avoid my parent
 			childVns.avoiderSpeed.locV3 =
-				Avoider.add(childVns.locV3, self.parentLocV3, Quaternion:create(),
+				InAvoider.add(childVns.locV3, self.parentLocV3, Quaternion:create(),
 				            childVns.avoiderSpeed.locV3,
 				            60)
 
 			-- avoid my self
 			childVns.avoiderSpeed.locV3 =
-				Avoider.add(childVns.locV3, Vec3:create(), Quaternion:create(),
+				InAvoider.add(childVns.locV3, Vec3:create(), Quaternion:create(),
 				            childVns.avoiderSpeed.locV3,
 				            60)
 
@@ -60,7 +60,7 @@ function Avoider:run(vns, paraT)
 				if idS ~= jidS then -- else continue
 	
 				childVns.avoiderSpeed.locV3 =
-					Avoider.add(childVns.locV3, jchildVns.locV3, jchildVns.dirQ,
+					InAvoider.add(childVns.locV3, jchildVns.locV3, jchildVns.dirQ,
 					            childVns.avoiderSpeed.locV3,
 					            60)
 			end end end
@@ -70,7 +70,7 @@ function Avoider:run(vns, paraT)
 			for jidS, robotR in pairs(paraT.vehiclesTR) do
 				if jidS ~= idS then
 					childVns.avoiderSpeed.locV3 =
-						Avoider.add(childVns.locV3, robotR.locV3, robotR.dirQ,
+						InAvoider.add(childVns.locV3, robotR.locV3, robotR.dirQ,
 						            childVns.avoiderSpeed.locV3,
 						            60)
 				end
@@ -79,9 +79,10 @@ function Avoider:run(vns, paraT)
 	end
 end
 
-function Avoider.add(myLocV3, obLocV3, obDirQ, accumulatorV3, threshold)
+function InAvoider.add(myLocV3, obLocV3, obDirQ, accumulatorV3, threshold)
 	local dV3 = myLocV3 - obLocV3
 	local d = dV3:len()
+	if d == 0 then return accumulatorV3 end
 	local ans = accumulatorV3
 	if d < threshold then
 		local transV3 = 0.2 / d * dV3:nor()
@@ -93,11 +94,11 @@ function Avoider.add(myLocV3, obLocV3, obDirQ, accumulatorV3, threshold)
 		else
 			q = Quaternion:create(0, 0, 1, math.pi/2) --* d/threshold)
 		end
-		ans = ans + transV3 + q:toRotate(roundV3)
+		ans = ans + transV3-- + q:toRotate(roundV3)
 	end
 
 	return ans
 end
 
-return Avoider
+return InAvoider
 
