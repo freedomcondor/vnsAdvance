@@ -55,12 +55,21 @@ function Driver:run(vns, paraT)
 
 	local transV3 = self.lastReceivedSpeed.locV3
 	local rotateV3 = self.lastReceivedSpeed.dirV3
+
+	-- add emergency speed
 	if vns.emergencySpeed ~= nil then
 		local scalar = 1
 		--transV3 = (transV3 + vns.emergencySpeed.locV3 * scalar):nor()
 		--rotateV3 = (rotateV3 + vns.emergencySpeed.dirV3 * scalar):nor()
 		transV3 = transV3 + vns.emergencySpeed.locV3 * scalar
 		rotateV3 = rotateV3 + vns.emergencySpeed.dirV3 * scalar
+	end
+
+	-- add random speed
+	if vns.randomWalkerSpeed ~= nil then
+		local scalar = 1
+		transV3 = transV3 + vns.randomWalkerSpeed.locV3 * scalar
+		rotateV3 = rotateV3 + vns.randomWalkerSpeed.dirV3 * scalar
 	end
 	vns.move(transV3, rotateV3)
 

@@ -27,7 +27,7 @@
           <joint id="base_wheel_right" mode="velocity"/>
         </joints>
         <radios implementation="default" show_rays="false"/>
-        <proximity implementation="default" show_rays="true"/>
+        <proximity implementation="default" show_rays="false"/>
       </sensors>
       <params script="structure_vehicle.lua" />
     </lua_controller>
@@ -50,12 +50,12 @@
                   anchor="body" position="0,0,-0.01" orientation="0,0,180"
                   focal_length="200,200" principal_point="320,240">
             <led_detector medium="leds" show_rays="false"/>
-            <tag_detector medium="apriltags" show_rays="true"/>
+            <tag_detector medium="apriltags" show_rays="false"/>
           </camera>
         </cameras>
         <radios implementation="default" show_rays="false"/>
       </sensors>
-      <params script="structure_quadcopter.lua" />
+      <params script="demo_quadcopter.lua" />
     </lua_controller>
 
   </controllers>
@@ -80,22 +80,29 @@
     </box>
 	-->
 
-
-    <!-- blocks -->
+	<!-- blocks -->
 	<!--
     <distribute>
-      <position method="uniform" min="-0.9,-0.9,0" max="0.9,0.9,0" />
+      <position method="uniform" min="0.3,-0.3,0" max="0.6,0.3,0" />
       <orientation method="uniform" min="0,0,0" max="360,0,0" />
-      <entity quantity="20" max_trials="100">
-        <box id="b0" size="0.05,0.05,0.025" movable="false" mass="0.05"/>
+      <entity quantity="10" max_trials="100">
+        <box id="wall" size="0.04,0.04,0.02" movable="true" mass="0.05">
+          <leds medium="leds">
+            <led color="red" anchor="origin" offset="0,0,0.021"/>
+          </leds>
+        </box>
       </entity>
     </distribute>
 
     <distribute>
-      <position method="uniform" min="-0.9,-0.9,0" max="0.9,0.9,0" />
+      <position method="uniform" min="0.3,-0.3,0" max="0.6,0.3,0" />
       <orientation method="uniform" min="0,0,0" max="360,0,0" />
-      <entity quantity="20" max_trials="100">
-        <box id="b1" size="0.05,0.10,0.025" movable="false" mass="0.05"/>
+      <entity quantity="1" max_trials="100">
+        <box id="Pre" size="0.04,0.04,0.02" movable="true" mass="0.05">
+          <leds medium="leds">
+            <led color="blue" anchor="origin" offset="0,0,0.021"/>
+          </leds>
+        </box>
       </entity>
     </distribute>
 	-->
@@ -104,9 +111,10 @@
 	<!--
 	-->
     <distribute>
-      <position method="uniform" min="-l.9,-1.9,0" max="1.9,1.9,0" />
+      <!--position method="uniform" min="-1.9,-1.9,0" max="1.9,1.9,0" /-->
+      <position method="uniform" min="-0.5,-0.5,0" max="0.5,0.5,0" />
       <orientation method="uniform" min="0,0,0" max="360,0,0" />
-      <entity quantity="20" max_trials="100">
+      <entity quantity="5" max_trials="100">
         <prototype id="vehicle" movable="true">
           <body position="0,0,0" orientation="0,0,0" />
           <controller config="vehicle_controller"/>
@@ -169,7 +177,7 @@
 
     <!-- quadcopters -->
     <prototype id="quadcopter0" movable="false">
-      <body position="1.0,0,0.3" orientation="0,0,0" />
+	  <body position="0,0,0.3" orientation="0,0,0" />
       <controller config="quadcopter_controller"/>
       <links ref="axis0">
         <link id="axis0" geometry="sphere" radius="0" mass="0.001"
@@ -182,11 +190,11 @@
               position="0,0,0" orientation="0,0,0" />
       </links>
       <joints>
-        <joint id="axis0_axis1" type="prismatic" axis="1,0,0" limit="-20.95:10.95">
+        <joint id="axis0_axis1" type="prismatic" axis="1,0,0" limit="-200.95:100.95">
           <parent link="axis0" position="0,0,0" orientation="0,0,0"/>
           <child link="axis1" position="0,0,0" orientation="0,0,0"/>
         </joint>
-        <joint id="axis1_axis2" type="prismatic" axis="0,1,0" limit="-10.95:10.95">
+        <joint id="axis1_axis2" type="prismatic" axis="0,1,0" limit="-100.95:100.95">
           <parent link="axis1" position="0,0,0" orientation="0,0,0"/>
           <child link="axis2" position="0,0,0" orientation="0,0,0"/>
         </joint>
@@ -203,7 +211,7 @@
     </prototype>
 
     <prototype id="quadcopter1" movable="false">
-      <body position="0.0,0,0.3" orientation="0,0,0" />
+      <body position="-0.5,0,0.3" orientation="0,0,0" />
       <controller config="quadcopter_controller"/>
       <links ref="axis0">
         <link id="axis0" geometry="sphere" radius="0" mass="0.001"
@@ -216,11 +224,11 @@
               position="0,0,0" orientation="0,0,0" />
       </links>
       <joints>
-        <joint id="axis0_axis1" type="prismatic" axis="1,0,0" limit="-10.95:10.95">
+        <joint id="axis0_axis1" type="prismatic" axis="1,0,0" limit="-100.95:100.95">
           <parent link="axis0" position="0,0,0" orientation="0,0,0"/>
           <child link="axis1" position="0,0,0" orientation="0,0,0"/>
         </joint>
-        <joint id="axis1_axis2" type="prismatic" axis="0,1,0" limit="-10.95:10.95">
+        <joint id="axis1_axis2" type="prismatic" axis="0,1,0" limit="-100.95:100.95">
           <parent link="axis1" position="0,0,0" orientation="0,0,0"/>
           <child link="axis2" position="0,0,0" orientation="0,0,0"/>
         </joint>
@@ -237,7 +245,8 @@
     </prototype>
 
     <prototype id="quadcopter2" movable="false">
-      <body position="-0.5,0.3,0.3" orientation="0,0,0" />
+      <!--body position="-0.5,0.3,0.5" orientation="0,0,0" /-->
+      <body position="-1.0,0,0.3" orientation="0,0,0" />
       <controller config="quadcopter_controller"/>
       <links ref="axis0">
         <link id="axis0" geometry="sphere" radius="0" mass="0.001"
@@ -250,11 +259,11 @@
               position="0,0,0" orientation="0,0,0" />
       </links>
       <joints>
-        <joint id="axis0_axis1" type="prismatic" axis="1,0,0" limit="-10.45:20.45">
+        <joint id="axis0_axis1" type="prismatic" axis="1,0,0" limit="-100.45:200.45">
           <parent link="axis0" position="0,0,0" orientation="0,0,0"/>
           <child link="axis1" position="0,0,0" orientation="0,0,0"/>
         </joint>
-        <joint id="axis1_axis2" type="prismatic" axis="0,1,0" limit="-20.25:10.65">
+        <joint id="axis1_axis2" type="prismatic" axis="0,1,0" limit="-200.25:100.65">
           <parent link="axis1" position="0,0,0" orientation="0,0,0"/>
           <child link="axis2" position="0,0,0" orientation="0,0,0"/>
         </joint>
@@ -270,8 +279,9 @@
       </devices>
     </prototype>
 
+	<!--
     <prototype id="quadcopter3" movable="false">
-		<body position="0.5,1.0,0.3" orientation="-90,0,0" /> <!-- border range is wrong -->
+      <body position="-1.0,0,0.3" orientation="0,0,0" />
       <controller config="quadcopter_controller"/>
       <links ref="axis0">
         <link id="axis0" geometry="sphere" radius="0" mass="0.001"
@@ -284,11 +294,11 @@
               position="0,0,0" orientation="0,0,0" />
       </links>
       <joints>
-        <joint id="axis0_axis1" type="prismatic" axis="1,0,0" limit="-20.45:10.45">
+        <joint id="axis0_axis1" type="prismatic" axis="1,0,0" limit="-200.45:100.45">
           <parent link="axis0" position="0,0,0" orientation="0,0,0"/>
           <child link="axis1" position="0,0,0" orientation="0,0,0"/>
         </joint>
-        <joint id="axis1_axis2" type="prismatic" axis="0,1,0" limit="-20.95:10.95">
+        <joint id="axis1_axis2" type="prismatic" axis="0,1,0" limit="-200.95:100.95">
           <parent link="axis1" position="0,0,0" orientation="0,0,0"/>
           <child link="axis2" position="0,0,0" orientation="0,0,0"/>
         </joint>
@@ -305,7 +315,7 @@
     </prototype>
 
     <prototype id="quadcopter4" movable="false">
-		<body position="0.5,-1.0,0.3" orientation="90,0,0" /> <!-- border range is wrong -->
+      <body position="0.0,0,0.3" orientation="0,0,0" />
       <controller config="quadcopter_controller"/>
       <links ref="axis0">
         <link id="axis0" geometry="sphere" radius="0" mass="0.001"
@@ -318,11 +328,11 @@
               position="0,0,0" orientation="0,0,0" />
       </links>
       <joints>
-        <joint id="axis0_axis1" type="prismatic" axis="1,0,0" limit="-20.45:10.45">
+        <joint id="axis0_axis1" type="prismatic" axis="1,0,0" limit="-200.45:100.45">
           <parent link="axis0" position="0,0,0" orientation="0,0,0"/>
           <child link="axis1" position="0,0,0" orientation="0,0,0"/>
         </joint>
-        <joint id="axis1_axis2" type="prismatic" axis="0,1,0" limit="-10.95:20.95">
+        <joint id="axis1_axis2" type="prismatic" axis="0,1,0" limit="-100.95:200.95">
           <parent link="axis1" position="0,0,0" orientation="0,0,0"/>
           <child link="axis2" position="0,0,0" orientation="0,0,0"/>
         </joint>
@@ -337,9 +347,11 @@
         </radios>
       </devices>
     </prototype>
+	 -->
 
+	<!--
     <prototype id="quadcopter5" movable="false">
-		<body position="0.5,-1.5,0.3" orientation="90,0,0" /> <!-- border range is wrong -->
+      <body position="0.0,0,0.3" orientation="0,0,0" />
       <controller config="quadcopter_controller"/>
       <links ref="axis0">
         <link id="axis0" geometry="sphere" radius="0" mass="0.001"
@@ -352,11 +364,11 @@
               position="0,0,0" orientation="0,0,0" />
       </links>
       <joints>
-        <joint id="axis0_axis1" type="prismatic" axis="1,0,0" limit="-50.45:50.45">
+        <joint id="axis0_axis1" type="prismatic" axis="1,0,0" limit="-500.45:500.45">
           <parent link="axis0" position="0,0,0" orientation="0,0,0"/>
           <child link="axis1" position="0,0,0" orientation="0,0,0"/>
         </joint>
-        <joint id="axis1_axis2" type="prismatic" axis="0,1,0" limit="-50.05:50.95">
+        <joint id="axis1_axis2" type="prismatic" axis="0,1,0" limit="-500.05:500.95">
           <parent link="axis1" position="0,0,0" orientation="0,0,0"/>
           <child link="axis2" position="0,0,0" orientation="0,0,0"/>
         </joint>
@@ -371,6 +383,7 @@
         </radios>
       </devices>
     </prototype>
+	 -->
 
 
 	<!--
@@ -510,7 +523,7 @@
         <placement idx="5" position="-2.5, 2.5,1" look_at="0,0,0.05" lens_focal_length="92" />
         <placement idx="6" position="-2.5, 0,  1" look_at="0,0,0.05" lens_focal_length="78" />
         <placement idx="7" position="-2.5,-2.5,1" look_at="0,0,0.05" lens_focal_length="92" />
-        <placement idx="8" position="0,0,4.5" look_at="0.0,0.0,0.125" up="1,0,0" lens_focal_length="40" />
+        <placement idx="8" position="0,0,4.5" look_at="0.0,0.0,0.125" up="0,1,0" lens_focal_length="40" />
       </camera>
     </qt-opengl>
   </visualization>

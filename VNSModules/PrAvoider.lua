@@ -18,6 +18,7 @@ function PrAvoider:new()
 end
 
 function PrAvoider:run(vns, paraT)
+	print("I am run of PrAvoider")
 	if vns.emergencySpeed == nil then
 		vns.emergencySpeed = {
 			locV3 = Vec3:create(),

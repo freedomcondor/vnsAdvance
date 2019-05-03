@@ -1,11 +1,7 @@
 vim coding.sh -c "
-	tabnew structure.argos
+	tabnew transform.argos
 	tabnew structure_vehicle.lua
-	vsp structure_quadcopter.lua
-
-	tabnew testing/pravoider.argos
-	tabnew testing/pravoider_vehicle.lua
-	vsp testing/pravoider_quadcopter.lua
+	vsp transform_quadcopter.lua
 
 	tabnew VNS.lua
 
@@ -21,6 +17,14 @@ set tempvimcmd="
 	tabnew structure.argos
 	tabnew structure_vehicle.lua
 	vsp structure_quadcopter.lua
+
+	tabnew testing/avoider.argos
+	tabnew testing/avoider_vehicle.lua
+	vsp testing/avoider_quadcopter.lua
+
+	tabnew testing/pravoider.argos
+	tabnew testing/pravoider_vehicle.lua
+	vsp testing/pravoider_quadcopter.lua
 
 	tabnew VNSModules/ShiftUpper.lua
 	vsp VNSModules/Shifter.lua
@@ -40,10 +44,6 @@ set tempvimcmd="
 	tabnew testing/exavoider.argos
 	tabnew testing/exavoider_vehicle.lua
 	vsp testing/exavoider_quadcopter.lua
-
-	tabnew testing/avoider.argos
-	tabnew testing/avoider_vehicle.lua
-	vsp testing/avoider_quadcopter.lua
 
 	tabnew testing/structure.argos
 	tabnew testing/structure_vehicle.lua

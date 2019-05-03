@@ -90,11 +90,11 @@ function InAvoider.add(myLocV3, obLocV3, obDirQ, accumulatorV3, threshold)
 		local roundV3 = 2 / d * dV3:nor()
 		local q
 		if rotatedDV3.x < 0 then
-			q = Quaternion:create(0, 0, 1, math.pi/2) --* d/threshold)
+			q = Quaternion:create(0, 0, 1, math.pi/4) --* d/threshold)
 		else
-			q = Quaternion:create(0, 0, 1, math.pi/2) --* d/threshold)
+			q = Quaternion:create(0, 0, 1, math.pi/4) --* d/threshold)
 		end
-		ans = ans + transV3-- + q:toRotate(roundV3)
+		ans = ans + transV3 + q:toRotate(roundV3)
 	end
 
 	return ans

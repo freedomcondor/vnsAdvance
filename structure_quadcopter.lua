@@ -27,7 +27,7 @@ VNS.EnableModules = {
 	VNS.Modules.ExAvoider,
 	VNS.Modules.PrAvoider,
 
-	VNS.Modules.RandomWalker,
+	--VNS.Modules.RandomWalker,
 	VNS.Modules.Driver,
 }
 
@@ -99,6 +99,20 @@ function init()
 						},
 					},
 					{	robotType = "quadcopter",
+						locV3 = Vec3:create(0, -dis*2, 0),
+						dirQ = Quaternion:create(0,0,1, math.pi/2),
+						children = {
+							{	robotType = "vehicle",
+								locV3 = Vec3:create(-dis, -dis, 0),
+								dirQ = Quaternion:create(0,0,1, 0),
+							},
+							{	robotType = "vehicle",
+								locV3 = Vec3:create(-dis, dis, 0),
+								dirQ = Quaternion:create(0,0,1, 0),
+							},
+						},
+					},
+					{	robotType = "quadcopter",
 						locV3 = Vec3:create(0, dis*2, 0),
 						dirQ = Quaternion:create(0,0,1, -math.pi/2),
 						children = {
@@ -112,20 +126,6 @@ function init()
 							},
 						},
 
-					},
-					{	robotType = "quadcopter",
-						locV3 = Vec3:create(0, -dis*2, 0),
-						dirQ = Quaternion:create(0,0,1, math.pi/2),
-						children = {
-							{	robotType = "vehicle",
-								locV3 = Vec3:create(-dis, -dis, 0),
-								dirQ = Quaternion:create(0,0,1, 0),
-							},
-							{	robotType = "vehicle",
-								locV3 = Vec3:create(-dis, dis, 0),
-								dirQ = Quaternion:create(0,0,1, 0),
-							},
-						},
 					},
 
 				},

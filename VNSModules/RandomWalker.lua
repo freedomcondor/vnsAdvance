@@ -15,7 +15,10 @@ end
 
 function RandomWalker:run(vns)
 	-- work only no parent
-	if vns.parentS ~= nil then return end
+	if vns.parentS ~= nil then 
+		vns.randomWalkerSpeed = nil
+		return 
+	end
 
 	--local x = math.random() - 0.5
 	local x = math.random()
@@ -29,7 +32,11 @@ function RandomWalker:run(vns)
 	--local rotateV3 = Vec3:create(x,y,z):nor() * 1.5
 	local rotateV3 = Vec3:create(x,y,z):nor() * 0.5
 
-	vns.move(transV3, rotateV3)
+	--vns.move(transV3, rotateV3)
+	vns.randomWalkerSpeed = {
+		locV3 = transV3,
+		dirV3 = rotateV3,
+	}
 end
 
 return RandomWalker
