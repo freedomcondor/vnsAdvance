@@ -152,6 +152,7 @@ function step()
 	vns:run{vehiclesTR = getVehicleTR(), 
 	        boxesTR = getBoxesTR(),
 	        predatorsTR = getPredatorsTR(),}
+	
 	print("brain", vns.brainS)
 	print("parent = ", vns.parentS)
 	print("childrenTVns = ")
@@ -159,9 +160,11 @@ function step()
 	for i, v in pairs(vns.childrenTVns) do
 		print("\t", i)
 	end
+	--[[
 	print("AssignTable")
 	showTable(vns.modules[4].childrenAssignTS, 1)
 	print("myAssignParent", vns.myAssignParent)
+	--]]
 end
 
 -------------------------------------------------------------------

@@ -18,7 +18,6 @@ function PrAvoider:new()
 end
 
 function PrAvoider:run(vns, paraT)
-	print("I am run of PrAvoider")
 	if vns.emergencySpeed == nil then
 		vns.emergencySpeed = {
 			locV3 = Vec3:create(),
@@ -31,7 +30,6 @@ function PrAvoider:run(vns, paraT)
 	self.currentSpeed.dirV3 = self.currentSpeed.dirV3 * chillRate
 
 	for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "emergency")) do
-		print("I received a emergency")
 		if vns.childrenTVns[msgM.fromS] ~= nil or 
 		   vns.parentS == msgM.fromS then -- else continue
 
@@ -52,7 +50,6 @@ function PrAvoider:run(vns, paraT)
 		self.currentSpeed.locV3 = self.currentSpeed.locV3 + transV3
 		self.currentSpeed.dirV3 = self.currentSpeed.dirV3 + rotateV3
 		
-		print("I send a stimulate")
 		-- message from children, send to parent
 		if vns.childrenTVns[msgM.fromS] ~= nil then
 			if vns.parentS ~= nil then
@@ -80,9 +77,6 @@ function PrAvoider:run(vns, paraT)
 			dirV3 = Vec3:create(),
 		}
 
-		print("predator table")
-		showTable(paraT.predatorsTR)
-
 		for i, predatorR in ipairs(paraT.predatorsTR) do
 			stimulateSpeed.locV3 = 
 			PrAvoider.add(predatorR.locV3, predatorR.dirQ,
@@ -90,12 +84,8 @@ function PrAvoider:run(vns, paraT)
 			              60)
 		end
 
-		print("stimulate", stimulateSpeed.locV3)
-		print("stimulate len", stimulateSpeed.locV3:len())
-
 		if stimulateSpeed.locV3:len() ~= 0 then
 			if vns.parentS ~= nil then
-				print("I send a stimulate")
 				vns.Msg.send(vns.parentS, "emergency", {
 					transV3 = stimulateSpeed.locV3, rotateV3 = Vec3:create(),
 				})

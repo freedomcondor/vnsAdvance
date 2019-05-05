@@ -7,9 +7,17 @@ vnsAdvance
 	Version:
 		1.0 :	created from argos3	22/03/2019
 				with a basic morphology implementation
+
+		2.0 :	morphology works with:
+				shift up shift down structure maintainer
+				inner, external, preditor avoider
 	
 -----------------------------------------------------------------------------
 This git repository works with argos3 (https://github.com/ilpincy/argos3)
+
+
+-----------------------------------------------------------------------------
+File explainations
 -----------------------------------------------------------------------------
 run.sh
 
@@ -20,6 +28,9 @@ your argos3
 	please specify the argos build directory at the first line of run.sh,
 	and simply:
 		bash run.sh
+	
+		have a look inside run.sh and you will know what it does. You can 
+		change it as your wish
 	
 2. if you install argos to the system
 	I think simply 
@@ -33,25 +44,193 @@ This file is used only if you are a vim user, otherwise you can delete it
 If you are a vim user, have a look at the file and you'll know what to do
 
 -----------------------------------------------------------------------------
-vns.argos
+xxx.argos
 
 This is the key file that argos3 run with, describing everything about the scenario
 
-In the vns scenario, there are quadcopters and ground vehicles(ground vehicles 
-are sometimes just called robots), the lua controller of each is specified at 
-line 33 and line 60 (or nearby) in vns.argos
+In the current scenario, there are quadcopters and ground vehicles, and some boxes
+, the lua controller of each is specified at line 33 and line 60 (or 
+near) in the .argos file
 
 -----------------------------------------------------------------------------
-Quadcopter.lua/Vehicle.lua
+xxx_quadcopter.lua/xxx_vehicle.lua
 
-controllers of quadcopters/ground vehicles
+	controllers of quadcopters/ground vehicles, file name defined in xxx.argos
 
 -----------------------------------------------------------------------------
-VNS.lua, StateMachine.lua, math/
+VNS.lua, StateMachine.lua, math/, VNSModules/
 
-These are Libraries that lua controllers are using
+	These are Libraries that lua controllers are using
 
 -----------------------------------------------------------------------------
 debugger.lua
 
-a basic lua debugger, has some basic functions
+	a basic lua debugger, has some basic functions
+
+
+
+
+
+----------------------------------------------------------------------------
+explaination of the code framework
+----------------------------------------------------------------------------
+1. key idea of the framework
+
+1.1 key idea
+
+In this implementation of vns, I tried to make every thing in module
+
+If you check the step() functions in each controller of quadcopter and vehicle,
+   (line 149 in structure_quacopter.lua,  line 43 in structure_vehicle.lua, or near)
+you will find that the only thing they do is vns:run(some parameters)
+
+Then, if you check what does vns:run() do (line 115 in VNS.lua), you will find
+vns.run just loop all the modules, for each module, do <this module>:run().
+
+And what really matters is the run() function of each module.
+
+Therefore, if you want to add something new, or improve the existing, 
+you can just find that module and change that module, without damaging other 
+parts of the code.
+
+And if you want to change a behavior, you can just enable the corresponding module.
+
+Basically this is the key idea of the framework of this code.
+
+1.2 what does a vns care
+
+Let's adjust some concepts here: we have quadcopters and vehicles(ground vehicles)
+Those are fine, but when I say "robots" I mean the total of quadcopters and vehicles.
+That is: we have two types of robots, quadcopters and ground vehicles. In the future,
+
+In general, I am making vns indepent to the type of robots. I mean, all the robots
+(no matter which type) all run the same vns core code. A vns treats all kinds of robots
+the same.
+
+Based on this, a robot (no matter what kind of robots it is), is considered a vns
+node. This vns node has some basic data:
+	id, location, parent, children
+
+	and 
+	
+	vns.move(),
+		which is a function to move this robot. Each type of robots needs to 
+		implement vns.move for their own 
+			(like line 299 in structure_quadcopter.lua and 
+			      line 70 in structure_vehicle.lua)
+		but vns just use vns.move to move a robot around, it doesn't care what
+		type this robot is.
+	
+	and
+
+	vns.Msg,
+		which is used for vns to send and recevie data between each other. Again,
+		the low level sendData and receiveData needs to be implemented by each
+		type of robots. 
+			(like line 291, line 295 in structure_quadcopter.lua
+			 	  line 62, line 66 in structure_vehicle.lua)
+
+Therefore, in the future, if we find out that we need to import a third type of robot, 
+all the vns code remains the same.
+
+2. How do modules work
+
+2.1 Data Structure
+
+Here I assume you have already know how to write Object-Oriented code with lua, 
+like how to write a class and get a instance of a class. (If you don't, that's 
+another story, try http://www.lua.org/manual/5.1/ to get a basic idea. For detail,
+let's find another time to discuss)
+
+In our implementation, their is a class called VNS(upper-case letter, defined in
+VNS.lua). Each controller(structure_quadcopter.lua or structure_vehicle.lua) gets 
+a instance of this class called vns (lower-case. you can find something like
+		vns = VNS:new(some parameter),
+		like line 136 in structure_quadcopter.lua 
+		and line 32 in structure_vehicle.lua)
+
+A module is also a class (usually named with a upper-case letter), defined in 
+the folder "VNSModules", you can see a lot of .lua files in it. Each is a
+module class. For each enabled module, a instance is created for a instance of 
+vns. (line 52 in VNS.lua, or near)
+
+Therefore, a instance of VNS is a table like this:
+	vns = {
+		many datas, like id, location of the robot, children, parent..
+		modules = {
+			instances of modules
+		}
+	}
+
+2.2 How does a module work
+
+Let's find an example to see how does a module work. Let's find 
+	VNSModules/RandomWalker.lua
+It is a very simple one, it has only two functions, one is new(), one is run().
+
+new() is just the function to create and return an instance of this module. 
+What's interesting is the run()
+
+Have a look at the run() function you will find:
+1. parameter
+	it takes a parameter called vns, which is the vns instance who runs this module.
+2. output
+	it generates a random speed, and stores them inside vns.randomWalkerSpeed
+
+That's all it does. This vns.randomWalkerSpeed will be used by another module called
+Driver, who takes care of the movement of the robot.
+
+3. Explaination for each module
+
+In the beginning of VNS.lua, line 13 to 27, there are imports of all the modules,
+and in the beginning of each controller (line 16 for quadcopter and line 13 for vehicle),
+there are switches of all the enabled modules.
+
+Let's have a look at all the modules enabled for quadcopter, let me explain what
+are they doing:
+
+VNS.EnableModules = {
+	VNS.Modules.VehicleConnector,     -- the module to connect with vehicles
+	VNS.Modules.QuadcopterConnector,  -- the module to connect with quadcopters
+	VNS.Modules.LostCounter,          -- if I can't see a connected robot, count
+	                                     a for a few seconds, and disconnect
+
+	VNS.Modules.Shifter,              -- maintain a structure(morphology) using
+	                                     the "shift up and shift down" strategy
+										 This is a little bit complicated, let's
+										 find another time to discuss.
+
+	VNS.Modules.InAvoider,			  -- control its children to avoid collision 
+	                                     with other robots in the same vns.
+
+	VNS.Modules.ExAvoider,            -- control its children to avoid boxes seen 
+	                                     by quadcopters
+
+	VNS.Modules.PrAvoider,            -- avoid a preditor, send and spread an 
+	                                     emergency message to the whole vns, so
+										 that each vns can move together
+
+	--VNS.Modules.RandomWalker,
+	VNS.Modules.Driver,               -- combines all the speeds and rallypoint
+		                                 from other modules, and drive robots 
+										 around, send drive commands to children
+}
+
+4. Related to your task
+
+Actually, I am not so sure what you are going to do. As far as I know, you need
+to find a way to make all the robots in a vns can feel an object together.
+
+So just do whatever you need to make this idea happen. I wouldn't let myself stuck
+in problems like whether to use leds or implement complicated obstacle avoidance.
+
+In my opinion, just for example, if you can implement some small scenarios in which 
+two quadcopters are counting boxes in the same field, and by talking to each other 
+they can find out which boxes are the common counted ones and which not, and give 
+a total number, we can call this a simple scenario of collective sensoring, and 
+you can use as many as leds, or you can let the robots hit obstacles
+pretty heavy, because they don't matter.
+
+I think, do not let Marco or Michael's specific instructions constrain you. This 
+is more like an open question, and "vns" is the only constrain (maybe in your 
+case also "collective sensoring"). We can do whatever we think is interesting with it.

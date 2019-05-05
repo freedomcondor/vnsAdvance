@@ -1,7 +1,7 @@
 vim coding.sh -c "
-	tabnew transform.argos
+	tabnew structure.argos
 	tabnew structure_vehicle.lua
-	vsp transform_quadcopter.lua
+	vsp structure_quadcopter.lua
 
 	tabnew VNS.lua
 
