@@ -234,3 +234,93 @@ pretty heavy, because they don't matter.
 I think, do not let Marco or Michael's specific instructions constrain you. This 
 is more like an open question, and "vns" is the only constrain (maybe in your 
 case also "collective sensoring"). We can do whatever we think is interesting with it.
+
+
+----------------------------------------------------------------------------
+explaination of the morphology strategy
+-----------------------------------------------------------------------------
+
+I tried to make the algorithm general, so forget about all the things regarding 
+to "driving" or "marking" robots. I will explain the morphology control strategy 
+here.
+
+1. Assigner
+
+A robot can send one of its children to another children or parent. We call this
+"assign"
+
+For example, now we have three robots.
+         A
+        / \	   
+       /   \
+      B    C
+
+Now we let A assign B to C. That means A will drive B towards C, until C can see B
+and recruit it. Finally it will be
+        A
+        \
+         C
+         \
+          B
+
+2. Maintainer
+
+The morphology is expressed in the form of a tree. If you check line 40 to line 134
+in structure_quadcopter.lua you will find the defination of a tree, which is the
+target morphology. You change this tree, the morphology will change accordingly.
+
+The Maintainer module is the one who is in change to maintain this tree. For any
+robot with a Maintainer module, it will allocate its recruited children a branch
+to play.
+
+For example: line 42 and 43 in structure_quadcopter.lua describe the location
+and direction of the brain (all zero), and line 44 says the brain would have 5
+branches. The first 4 are vehicles, each in different location. The 5th one is 
+a quadcopter, who also has its own children branches.
+
+Now, in the beginning, let's say the brain is alone. It's trying to recruit other
+robots to be its 5 branches.
+
+Then, let's say the brain saw one ground vehicle and recruited it as a child. 
+Let's call this child a "free" robot, which means this child doesn't have a branch
+to play yet (similar to the driving robots before). And then, the Maintainer module 
+would allocate this free robot a branch to play, in this case, the first branch of 
+the 5. (After allocated, we can say this child has a job to do, similar to marking
+robot before.) The rallypoint of this child would be set to (dis, dis, 0), and the 
+Driver module will try to drive it there.
+
+So, basically, the Maintainer module's job is to allocate each "free" robot a branch
+and set its rally point. For more "free" robots, the rallypoint would be (0,0,0).
+Note that by robot I mean both quadcopters and ground vehicle. If the brain recruited
+another quadcopter, the same would happen: the first recruited quadcopter has Branch 5
+to play, the second is free, and fly to (0,0,0).
+
+3. Shifter
+
+What do we do for these more "free" robots? That's Shifter module's job.
+A robot with shifter module will send message to its parent, telling him how many
+robots do I need for my children branches. In the meantime, he listens what his 
+children tells him about how many robots they need. If after allocating, there are 
+more "free" robots left, shifter will first assign these robots to his children who
+need more. If all the children tell that they are full, shifter will assign the more
+"free" robots to its parent. If after allocating, there are no more "free" robots, but
+the children are still not full, shifter would add the need number and tell this parent.
+
+In this way, all the "free" robots will all shift up in the tree until meet a branch in 
+need, and shift down to the place who needs more robots.
+
+That is how a tree is maintained.
+
+By this strategy, a morphology can be formed and heal itself.
+
+In the code you may notice that I comment out line 21,22,23 in structure_quadcopter.lua
+which is Assigner, Maintainer, and another shifter for another strategy.
+
+That's because:
+
+This shifter needs some operations of Maintainer, so I make a Shifter class inherited from
+A maintainer. And a Maintainer is inherited from Assigner.
+That means, a maintainer is already an assigner, with more functions, and a shifter is 
+already a maintainer with more functions. So only enable Shifter is enough.
+
+This is not a very nice way of coding, I'm still looking for better solutions.
