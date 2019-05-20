@@ -12,7 +12,7 @@ function Linar.mySpeedToYou(mySpeedV3, yourQuaternion)
 end
 
 function Linar.myQuadToYou(myQuad, yourQuaternion)
-	return myQuad * yourQuaternion:inv()
+	return yourQuaternion:inv() * myQuad
 end
 
 function Linar.yourVecToMe(yourVec, yourLocation, yourQuaternion)
@@ -25,7 +25,7 @@ function Linar.yourLocBySameObj(myVec, myQua, yourVec, yourQua)
 end
 
 function Linar.yourDirBySameObj(myQua, yourQua)
-	return myQua * yourQua:inv()
+	return yourQua:inv() * myQua
 end
 
 return Linar
