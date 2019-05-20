@@ -97,7 +97,7 @@ function Driver:run(vns, paraT)
 		local d = dV3:len()
 		local rallypointTransV3 = rallypointScalar / d * dV3:nor()
 
-		local rotateQ = robotVns.rallyPoint.dirQ * robotVns.dirQ:inv()
+		local rotateQ = robotVns.dirQ:inv() * robotVns.rallyPoint.dirQ
 		local ang = rotateQ:getAng()
 		if ang > math.pi then ang = ang - math.pi * 2 end
 		local rallypointRotateV3 = rotateQ:getAxis() * ang
