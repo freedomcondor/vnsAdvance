@@ -160,6 +160,43 @@ function step()
 	for i, v in pairs(vns.childrenTVns) do
 		print("\t", i)
 	end
+
+	--[[
+	if robot.debug ~= nil then
+		robot.debug.draw("arrow(red)(0.125,0,0.05)(0.25,0,0.05)")
+		robot.debug.draw("arrow(green)(0,0.125,0.05)(0,0.25,0.05)")
+		robot.debug.draw("arrow(blue)(0,0,0.25)(0,0,0.50)")
+		robot.debug.draw("ring(yellow)(0.5,0,0)(0.25)")
+	end
+	--]]
+	
+	--[[
+	for i, v in pairs(vns.childrenTVns) do
+		local height = 0
+		if v.robotType == "vehicle" then
+			height = 0
+		end
+		drawArrows(Vec3:create(0,0,0), v.locV3/1000 - Vec3:create(0,0,height))
+	end
+	--]]
+	
+	--[[
+	drawArrows(Vec3:create(0,0,0), Vec3:create(0.1,0,0))
+	drawArrows(Vec3:create(0,0,0), Vec3:create(0,0.1,0))
+	drawArrows(Vec3:create(0,0,0), Vec3:create(0,0,0.1))
+	drawArrows(Vec3:create(0,0,0), Vec3:create(0.1,0.1,0.1))
+	--]]
+
+	robot.debug.draw("arrow(red)(0,0,0)(0.1,  0,   0   )")
+	robot.debug.draw("arrow(green)(0,0,0)(0,    0.1, 0   )")
+	robot.debug.draw("arrow(blue)(0,0,0)(0,    0,   0.1 )")
+
+	robot.debug.draw("arrow(red)(0,0,0)(0.1,  0.1, 0.0 )")
+	robot.debug.draw("arrow(green)(0,0,0)(0.1,  0.0, 0.1 )")
+	robot.debug.draw("arrow(blue)(0,0,0)(0.0,  0.1, 0.1 )")
+
+	--robot.debug.draw("arrow(red)(0,0,0)(0.10, 0.1, 0.10)")
+
 	--[[
 	print("AssignTable")
 	showTable(vns.modules[4].childrenAssignTS, 1)
@@ -174,6 +211,21 @@ end
 ------------------------------------------------------------------------
 --   Customize Functions
 ------------------------------------------------------------------------
+
+function drawArrows(startV3, endV3)
+	local thRad = robot.joints.axis2_body.encoder
+	local loc = Vec3:create(
+		robot.joints.axis0_axis1.encoder,
+		robot.joints.axis1_axis2.encoder,
+		0
+	)
+	local q = Quaternion:create(0,0,1, thRad)
+	startV3 = q:toRotate(startV3) + loc
+	endV3 = q:toRotate(endV3) + loc
+	print(thRad)
+	print(endV3)
+	robot.debug.draw("arrow(red)" .. startV3:__tostring() .. endV3:__tostring())
+end
 
 function getVehicleTR()
 	local vehicleTR = {}
