@@ -1,19 +1,25 @@
 vim coding.sh -c "
-	tabnew structure.argos
-	tabnew structure_vehicle.lua
-	vsp structure_quadcopter.lua
+	tabnew testing/connectorTest.argos
+	tabnew testing/connectorTest_vehicle.lua
+	vsp testing/connectorTest_quadcopter.lua
 
 	tabnew VNS.lua
 
+	tabnew VNSModules/RandomWalker.lua
+	vsp VNSModules/Driver.lua
+
+	tabnew VNSModules/VehicleConnector.lua
+	vsp VNSModules/QuadcopterConnector.lua
+
+	tabnew VNSModules/Connector.lua
+	vsp VNSModules/LostCounter.lua
+"
+set tempvimcmd="
 	tabnew VNSModules/PrAvoider.lua
 
 	tabnew VNSModules/InAvoider.lua
 	vsp VNSModules/ExAvoider.lua
 
-	tabnew VNSModules/RandomWalker.lua
-	vsp VNSModules/Driver.lua
-"
-set tempvimcmd="
 	tabnew structure.argos
 	tabnew structure_vehicle.lua
 	vsp structure_quadcopter.lua

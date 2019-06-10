@@ -15,6 +15,9 @@ Modules.VehicleConnector = require("VehicleConnector")
 Modules.QuadcopterConnector = require("QuadcopterConnector")
 Modules.ParentWaitor = require("ParentWaitor")
 Modules.ParentWaitorDeny = require("ParentWaitorDeny")
+
+Modules.QGConnector = require("QGConnector")
+
 Modules.LostCounter = require("LostCounter")
 Modules.RandomWalker = require("RandomWalker")
 Modules.Assigner = require("Assigner")

@@ -4,7 +4,7 @@
 package.path = package.path .. ";../?.lua"
 package.path = package.path .. ";../math/?.lua"
 package.path = package.path .. ";../VNSModules/?.lua"
---require("debugger")
+require("debugger")
 require("TableTools")
 
 local IF = {} -- Robot Interface
@@ -14,7 +14,8 @@ local Quaternion = require("Quaternion")
 local VNS = require("VNS")
 
 VNS.EnableModules = {
-	VNS.Modules.VehicleConnector,
+	--VNS.Modules.VehicleConnector,
+	VNS.Modules.QGConnector,
 }
 
 local vns
@@ -28,7 +29,7 @@ end
 
 -------------------------------------------------------------------
 function reset()
-	vns = VNS:new{id = IF.myIDS()}
+	vns = VNS:new{id = IF.myIDS(), robotType = "quadcopter",}
 end
 
 -------------------------------------------------------------------

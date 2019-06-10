@@ -11,7 +11,8 @@ local IF = {} -- Robot Interface
 local VNS = require("VNS")
 
 VNS.EnableModules = {
-	VNS.Modules.ParentWaitor,
+	--VNS.Modules.ParentWaitor,
+	VNS.Modules.QGConnector,
 }
 
 local vns
@@ -26,7 +27,7 @@ end
 
 -------------------------------------------------------------------
 function reset()
-	vns = VNS:new{id = IF.myIDS()}
+	vns = VNS:new{id = IF.myIDS(), robotType = "vehicle",}
 end
 
 -------------------------------------------------------------------
