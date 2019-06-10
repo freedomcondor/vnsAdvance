@@ -40,9 +40,16 @@
           <joint id="axis1_axis2" mode="velocity" max_impulse="0.111"/>
           <joint id="axis2_body" mode="velocity" max_impulse="0.011"/>
         </joints>
+		<debug implementation="default">
+          <interface id="logerr" output="stderr" />
+          <interface id="log" output="stdout" />
+          <interface id="draw" />
+        </debug>
       </actuators>
       <sensors>
         <joints implementation="default">
+          <joint id="axis0_axis1" mode="position"/>
+          <joint id="axis1_axis2" mode="position"/>
           <joint id="axis2_body" mode="position"/>
         </joints>
         <cameras implementation="default" show_frustum="false">
@@ -50,7 +57,7 @@
                   anchor="body" position="0,0,-0.01" orientation="0,0,180"
                   focal_length="200,200" principal_point="320,240">
             <led_detector medium="leds" show_rays="false"/>
-            <tag_detector medium="apriltags" show_rays="true"/>
+            <tag_detector medium="apriltags" show_rays="false"/>
           </camera>
         </cameras>
         <radios implementation="default" show_rays="false"/>
@@ -501,6 +508,7 @@
   <!-- ****************** -->
   <visualization>
     <qt-opengl lua_editor="true">
+      <user_functions label="mns_qtopengl_user_functions" />
       <camera>
         <placement idx="0" position=" 0,  -2.5,1" look_at="0,0,0.05" lens_focal_length="78" />
         <placement idx="1" position=" 2.5,-2.5,1" look_at="0,0,0.05" lens_focal_length="92" />

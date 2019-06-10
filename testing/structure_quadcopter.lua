@@ -160,6 +160,15 @@ function step()
 	showTable(vns.modules[4].childrenAssignTS, 1)
 	print("myAssignParent", vns.myAssignParent)
 	test = vns
+
+	for i, v in pairs(vns.childrenTVns) do
+		local height = -0.01
+		if v.robotType == "vehicle" then
+			height = 0.27
+		end
+		drawArrows("blue",Vec3:create(0,0,0), v.locV3/770 - Vec3:create(0,0,height))
+	end
+
 end
 
 -------------------------------------------------------------------
@@ -169,6 +178,21 @@ end
 ------------------------------------------------------------------------
 --   Customize Functions
 ------------------------------------------------------------------------
+function drawArrows(color, startV3, endV3)
+	local thRad = robot.joints.axis2_body.encoder
+	local loc = Vec3:create(
+		robot.joints.axis0_axis1.encoder,
+		robot.joints.axis1_axis2.encoder,
+		0
+	)
+	local q = Quaternion:create(0,0,1, thRad)
+	startV3 = q:toRotate(startV3) + loc
+	endV3 = q:toRotate(endV3) + loc
+	print(thRad)
+	print(endV3)
+	robot.debug.draw("arrow(" .. color .. ")" .. startV3:__tostring() .. endV3:__tostring())
+end
+
 
 function getVehicleTR()
 	local vehicleTR = {}
